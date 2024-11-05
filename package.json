@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "gatsby build",
-    "develop": "gatsby develop",
-    "start": "gatsby develop",
-    "serve": "gatsby serve",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npx gatsby build",
+  "develop": "npx gatsby develop",
+  "start": "npx gatsby develop",
+  "serve": "npx gatsby serve",
+  "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "gatsby": "^5.13.7",
