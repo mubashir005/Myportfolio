@@ -20,14 +20,22 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "18"  # Use Node 18 for compatibility with Gatsby
+
       - name: Install dependencies
         run: npm install
+
+      # Add permissions to Gatsby CLI to prevent permission issues
+      - name: Fix Gatsby CLI Permissions
+        run: chmod +x node_modules/.bin/gatsby
+
       - name: Build with Gatsby
-        run: npm run build
+        run: npx gatsby build  # Use npx to run Gatsby build from node_modules
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
