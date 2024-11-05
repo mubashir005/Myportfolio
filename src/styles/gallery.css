@@ -1,25 +1,180 @@
-/* Gallery Grid */
-.gallery-container {
-  text-align: center;
-}
-
-.gallery-grid {
-  display: grid;
-  gap: 20px;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+/* General Styles */
+body {
+  font-family: "Mona Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #0d0c22;
+  background-color: #f4f4f9;
+  margin: 0;
+  max-width: 1500px; /* Limit the width */
+  margin: 0 auto; /* Center the entire body */
   padding: 20px;
 }
 
+/* Header */
+.header {
+  background-color: #0d0c22;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* Profile Section */
+.profile-header {
+  text-align: center;
+  margin: 20px auto; /* Space around profile */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-name {
+  font-size: 24px;
+  font-weight: bold;
+  color: #0d0c22;
+}
+
+.profile-location {
+  font-size: 14px;
+  color: #666;
+}
+
+.profile-description {
+  font-size: 14px;
+  color: #333;
+}
+
+.profile-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.get-in-touch, .edit-profile, .more-options {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.get-in-touch {
+  background-color: #333;
+  color: #fff;
+}
+
+.edit-profile {
+  background-color: #f4f4f9;
+  color: #333;
+}
+
+.more-options {
+  background-color: transparent;
+  color: #333;
+  font-size: 20px;
+  line-height: 1;
+}
+
+/* Footer */
+.footer {
+  background-color: #0d0c22;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.footer a {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.footer a:hover {
+  color: #ddd;
+}
+
+/* Gallery Container */
+.gallery-container {
+  text-align: center;
+  padding: 50px 20px;
+  margin: 0 auto;
+  max-width: 1500px; /* Keep the gallery aligned with body width */
+}
+
+
+.gallery-container h1 {
+  font-size: 36px;
+  margin-bottom: 10px;
+  color: #444;
+}
+
+.gallery-container p {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 40px;
+}
+
+/* Gallery Grid */
+.gallery-grid {
+  display: grid;
+  gap: 50px; /* Space between grid items */
+  grid-template-columns: repeat(4, 1fr); /* Four columns */
+  max-width: 100%; /* Ensure grid respects body max-width */
+  margin: 0 auto;
+}
+
+/* Gallery Item */
 .gallery-item {
   cursor: pointer;
-  transition: transform 0.2s ease;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+  position: relative;
 }
 
 .gallery-item:hover {
-  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
 }
 
-/* Modal Overlay */
+
+/* Hover Overlay */
+.gallery-item::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.05);
+  transition: background 0.3s;
+}
+
+.gallery-item:hover::after {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+/* Image Styling */
+.gallery-item img, .gallery-item .gatsby-image-wrapper {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* Modal */
 .modal {
   position: fixed;
   top: 0;
@@ -30,19 +185,21 @@
   align-items: center;
   justify-content: center;
   background: rgba(0, 0, 0, 0.8);
-  z-index: 20;
-  overflow-y: auto; /* Enables vertical scrolling */
+  z-index: var(--sl-z-index-dialog);
+  overflow-y: auto;
+  padding: 20px;
 }
 
-/* Image Styling */
+/* Modal Button */
+.get-in-touch, .follow-button {
+  display: inline-block;
+  margin: 0 10px; /* Spacing between buttons */
+}
 .modal img, .modal .gatsby-image-wrapper {
-  max-width: 100vw; /* Full width within the viewport */
-  max-height: 90vh; /* Fits within the viewport height */
-  width: auto;
-  height: auto;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  object-fit: contain; /* Ensures the aspect ratio is preserved */
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: 10px;
+  object-fit: contain;
 }
 
 /* Close Button */
@@ -50,10 +207,114 @@
   position: absolute;
   top: 20px;
   right: 20px;
-  font-size: 24px;
+  font-size: 28px;
   cursor: pointer;
-  color: white;
+  color: #fff;
   background: transparent;
   border: none;
   z-index: 30;
+  transition: color 0.2s ease;
 }
+
+.close-button:hover {
+  color: #ddd;
+}
+
+/* Responsive Typography */
+@media (max-width: 768px) {
+  .gallery-container h1 {
+    font-size: 28px;
+  }
+  .gallery-container p {
+    font-size: 16px;
+  }
+}
+
+/* Updated Counter Position */
+.counter {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  color: #333;
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 4px 8px;
+  border-radius: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Icon Styling */
+.counter .icon {
+  display: flex;
+  align-items: center;
+  color: #0d0c22;
+  font-size: 14px;
+}
+
+/* Portfolio Header */
+.portfolio-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 20px;
+}
+
+/* Portfolio Categories (Left-aligned) */
+.portfolio-categories {
+  display: flex;
+  gap: 20px;
+}
+
+.portfolio-categories .tab {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #0d0c22;
+  background-color: #fff;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.portfolio-categories .tab.active,
+.portfolio-categories .tab:hover {
+  background-color: #f4f4f9;
+  color: #333;
+}
+
+/* Portfolio Controls (Right-aligned) */
+.portfolio-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.sort-dropdown {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  color: #333;
+}
+
+.boost-button {
+  padding: 10px 20px;
+  background-color: #565564;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.boost-button:hover {
+  background-color: #444;
+}
+
