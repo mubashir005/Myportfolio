@@ -24,16 +24,23 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "18"  # Use Node 18 for compatibility with Gatsby
+          node-version: "18"
 
-      - name: Install dependencies for Linux
-        run: npm install --platform=linux --arch=x64 sharp
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libvips-dev
 
       - name: Install dependencies
         run: npm install --legacy-peer-deps --force
 
+      - name: Reinstall sharp
+        run: npm install sharp@latest --legacy-peer-deps
+
       - name: Build with Gatsby
-        run: npx gatsby build
+        env:
+          SHARP_IGNORE_GLOBAL_LIBVIPS: 1
+        run: npm run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
