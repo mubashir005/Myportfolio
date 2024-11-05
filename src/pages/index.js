@@ -146,24 +146,10 @@ const PortfolioPage = ({ data }) => {
         className="modal"
         overlayClassName="overlay"
       >
-        <div className="modal-content">
-          <div className="modal-header">
-            <div className="profile-info">
-              <img src={myImage} alt="Profile" className="profile-image" />
-              <div>
-                <h2>MUBASHIR UI Hassan</h2>
-                <p>Available for work</p>
-              </div>
-            </div>
-            <button className="modal-close" onClick={closeModal}>✕</button>
-          </div>
-          <GatsbyImage image={images[currentIndex]} alt="Enlarged Isometric Illustration" className="modal-image" />
-          <div className="modal-buttons">
-            <button className="icon-button">❤️</button>
-            <button className="icon-button">🔖</button>
-            <button className="contact-button">Get in touch</button>
-          </div>
-        </div>
+        {images[currentIndex] && (
+          <GatsbyImage image={images[currentIndex]} alt="Enlarged Isometric Illustration" />
+        )}
+        <button onClick={closeModal} className="close-button">Close</button>
       </Modal>
     </>
   );
