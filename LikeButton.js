@@ -7,6 +7,7 @@ const LikeButton = ({ projectId }) => {
   const [likeCount, setLikeCount] = useState(0);
 
   // Fetch the initial like count from Firestore
+  // Fetch the initial like count from Firestore
   useEffect(() => {
     const fetchLikes = async () => {
       const docRef = doc(db, "projects", projectId); // Get a reference to the document
