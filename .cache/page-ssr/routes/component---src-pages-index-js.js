@@ -2940,6 +2940,10 @@ const PortfolioPage = ({
     0: currentIndex,
     1: setCurrentIndex
   } = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(0);
+  const {
+    0: isZoomed,
+    1: setIsZoomed
+  } = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
 
   // Fetch images
   const images = data.allFile.edges.map(({
@@ -2950,11 +2954,17 @@ const PortfolioPage = ({
   const openModal = index => {
     setCurrentIndex(index);
     setModalIsOpen(true);
+    setIsZoomed(false); // Reset zoom state
   };
 
   // Close modal
   const closeModal = () => {
     setModalIsOpen(false);
+  };
+
+  // Toggle zoom effect
+  const toggleZoom = () => {
+    setIsZoomed(!isZoomed);
   };
 
   // Navigate to the previous image
@@ -3001,6 +3011,8 @@ const PortfolioPage = ({
     };
   }, []);
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_components_Header__WEBPACK_IMPORTED_MODULE_4__["default"], null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    className: `content ${modalIsOpen ? "blurred" : ""}`
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "profile-header"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("img", {
     src: _profileimage_my_image_jpg__WEBPACK_IMPORTED_MODULE_3__["default"],
@@ -3061,19 +3073,26 @@ const PortfolioPage = ({
     className: "icon"
   }, "\u2764\uFE0F 1"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", {
     className: "icon"
-  }, "\uD83D\uDC41\uFE0F 764")))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_components_Footer__WEBPACK_IMPORTED_MODULE_5__["default"], null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react_modal__WEBPACK_IMPORTED_MODULE_1___default()), {
+  }, "\uD83D\uDC41\uFE0F 764"))))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_components_Footer__WEBPACK_IMPORTED_MODULE_5__["default"], null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react_modal__WEBPACK_IMPORTED_MODULE_1___default()), {
     isOpen: modalIsOpen,
     onRequestClose: closeModal,
     contentLabel: "Image Lightbox",
-    className: "modal",
+    className: `modal ${isZoomed ? "zoomed" : ""}`,
     overlayClassName: "overlay"
-  }, images[currentIndex] && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(gatsby_plugin_image__WEBPACK_IMPORTED_MODULE_6__.GatsbyImage, {
-    image: images[currentIndex],
-    alt: "Enlarged Isometric Illustration"
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
     onClick: closeModal,
     className: "close-button"
-  }, "Close")));
+  }, "\xD7"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    className: "modal-content"
+  }, images[currentIndex] && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    className: "modal-image-container",
+    onClick: toggleZoom
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(gatsby_plugin_image__WEBPACK_IMPORTED_MODULE_6__.GatsbyImage, {
+    image: images[currentIndex],
+    alt: "Enlarged Isometric Illustration"
+  }), !isZoomed && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+    className: "zoom-icon"
+  }, "\uD83D\uDD0D")))));
 };
 const query = "3111450201";
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (PortfolioPage);

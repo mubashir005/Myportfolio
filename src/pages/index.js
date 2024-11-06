@@ -7,26 +7,33 @@ import myImage from "../profileimage/my_image.jpg";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
-
 // Set root element for modal accessibility
 Modal.setAppElement("#___gatsby");
 
 const PortfolioPage = ({ data }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isZoomed, setIsZoomed] = useState(false);
 
   // Fetch images
   const images = data.allFile.edges.map(({ node }) => getImage(node.childImageSharp));
+
 
   // Open modal with the selected image
   const openModal = (index) => {
     setCurrentIndex(index);
     setModalIsOpen(true);
+    setIsZoomed(false); // Reset zoom state
   };
 
   // Close modal
   const closeModal = () => {
     setModalIsOpen(false);
+  };
+
+  // Toggle zoom effect
+  const toggleZoom = () => {
+    setIsZoomed(!isZoomed);
   };
 
   // Navigate to the previous image
@@ -76,14 +83,12 @@ const PortfolioPage = ({ data }) => {
 
   return (
     <>
-      <Header />
+    
+    <Header />
+    <div className={`content ${modalIsOpen ? "blurred" : ""}`}>
       {/* Profile Section */}
       <div className="profile-header">
-        <img
-          src={myImage}
-          alt="Profile Picture"
-          className="profile-image"
-        />
+        <img src={myImage} alt="Profile Picture" className="profile-image" />
         <div className="profile-info">
           <h2 className="profile-name">MUBASHIR UI Hassan</h2>
           <p className="profile-location">Pakistan</p>
@@ -116,16 +121,14 @@ const PortfolioPage = ({ data }) => {
           <button className="boost-button">Boost Project</button>
         </div>
       </div>
+      
+      {/* Gallery Section */}
       <div className="gallery-container">
         <h1>My Isometric Illustrations</h1>
         <p>Explore my collection of isometric illustrations below.</p>
         <div className="gallery-grid">
           {images.map((image, index) => (
-            <div
-              key={index}
-              className="gallery-item"
-              onClick={() => openModal(index)}
-            >
+            <div key={index} className="gallery-item" onClick={() => openModal(index)}>
               <GatsbyImage image={image} alt="Isometric Illustration" />
               <div className="counter">
                 <span className="icon">💬 0</span>
@@ -136,23 +139,28 @@ const PortfolioPage = ({ data }) => {
           ))}
         </div>
       </div>
+    </div>
+    <Footer />
 
-      <Footer />
-
-      <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        contentLabel="Image Lightbox"
-        className="modal"
-        overlayClassName="overlay"
-      >
+    {/* Modal */}
+    <Modal
+      isOpen={modalIsOpen}
+      onRequestClose={closeModal}
+      contentLabel="Image Lightbox"
+      className={`modal ${isZoomed ? "zoomed" : ""}`}
+      overlayClassName="overlay"
+    >
+      <button onClick={closeModal} className="close-button">×</button>
+      <div className="modal-content">
         {images[currentIndex] && (
-          <GatsbyImage image={images[currentIndex]} alt="Enlarged Isometric Illustration" />
+          <div className="modal-image-container" onClick={toggleZoom}>
+            <GatsbyImage image={images[currentIndex]} alt="Enlarged Isometric Illustration" />
+          </div>
         )}
-        <button onClick={closeModal} className="close-button">Close</button>
-      </Modal>
-    </>
-  );
+      </div>
+    </Modal>
+  </>
+);
 };
 
 export const query = graphql`
