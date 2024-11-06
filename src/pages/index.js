@@ -4,8 +4,11 @@ import { GatsbyImage, getImage } from "gatsby-plugin-image";
 import Modal from "react-modal";
 import "../styles/gallery.css";
 import myImage from "../profileimage/my_image.jpg";
+import icon from "../profileimage/heart.png";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import LikeButton from "../../LikeButton";
+
 
 // Set root element for modal accessibility
 Modal.setAppElement("#___gatsby");
@@ -121,7 +124,6 @@ const PortfolioPage = ({ data }) => {
           <button className="boost-button">Boost Project</button>
         </div>
       </div>
-      
       {/* Gallery Section */}
       <div className="gallery-container">
         <h1>My Isometric Illustrations</h1>
@@ -130,10 +132,9 @@ const PortfolioPage = ({ data }) => {
           {images.map((image, index) => (
             <div key={index} className="gallery-item" onClick={() => openModal(index)}>
               <GatsbyImage image={image} alt="Isometric Illustration" />
-              <div className="counter">
-                <span className="icon">💬 0</span>
-                <span className="icon">❤️ 1</span>
-                <span className="icon">👁️ 764</span>
+              {/* Like Button on Hover */}
+              <div className="like-icon-container">
+                <LikeButton projectId={`project-${index}`} />
               </div>
             </div>
           ))}
