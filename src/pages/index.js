@@ -133,7 +133,7 @@ const PortfolioPage = ({ data }) => {
             <div key={index} className="gallery-item" onClick={() => openModal(index)}>
               <GatsbyImage image={image} alt="Isometric Illustration" />
               {/* Like Button on Hover */}
-              <div className="like-icon-container">
+              <div className="like-button-hover">
                 <LikeButton projectId={`project-${index}`} />
               </div>
             </div>
