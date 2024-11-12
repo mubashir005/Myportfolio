@@ -16574,6 +16574,7 @@ const LikeButton = ({
   } = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(0);
 
   // Fetch the initial like count from Firestore
+  // Fetch the initial like count from Firestore
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     const fetchLikes = async () => {
       const docRef = (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.doc)(_firebaseConfig__WEBPACK_IMPORTED_MODULE_1__.db, "projects", projectId); // Get a reference to the document
@@ -17426,20 +17427,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var gatsby_plugin_image__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! gatsby-plugin-image */ "./node_modules/gatsby-plugin-image/dist/gatsby-image.module.js");
-/* harmony import */ var react_modal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-modal */ "./node_modules/react-modal/lib/index.js");
-/* harmony import */ var react_modal__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_modal__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _styles_gallery_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../styles/gallery.css */ "./src/styles/gallery.css");
-/* harmony import */ var _styles_gallery_css__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_styles_gallery_css__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _profileimage_my_image_jpg__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../profileimage/my_image.jpg */ "./src/profileimage/my_image.jpg");
-/* harmony import */ var _profileimage_heart_png__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../profileimage/heart.png */ "./src/profileimage/heart.png");
-/* harmony import */ var _components_Header__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../components/Header */ "./src/components/Header.js");
-/* harmony import */ var _components_Footer__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../components/Footer */ "./src/components/Footer.js");
-/* harmony import */ var _LikeButton__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../LikeButton */ "./LikeButton.js");
+/* harmony import */ var gatsby__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! gatsby */ "./.cache/gatsby-browser-entry.js");
+/* harmony import */ var gatsby_plugin_image__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! gatsby-plugin-image */ "./node_modules/gatsby-plugin-image/dist/gatsby-image.module.js");
+/* harmony import */ var react_modal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-modal */ "./node_modules/react-modal/lib/index.js");
+/* harmony import */ var react_modal__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_modal__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var firebase_firestore__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! firebase/firestore */ "./node_modules/firebase/firestore/dist/index.mjs");
+/* harmony import */ var _firebaseConfig__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../firebaseConfig */ "./firebaseConfig.js");
+/* harmony import */ var _styles_gallery_css__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../styles/gallery.css */ "./src/styles/gallery.css");
+/* harmony import */ var _styles_gallery_css__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_styles_gallery_css__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _profileimage_my_image_jpg__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../profileimage/my_image.jpg */ "./src/profileimage/my_image.jpg");
+/* harmony import */ var _components_Header__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../components/Header */ "./src/components/Header.js");
+/* harmony import */ var _components_Footer__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../components/Footer */ "./src/components/Footer.js");
+/* harmony import */ var _LikeButton__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../LikeButton */ "./LikeButton.js");
 
 
 
 
+ // Import Firestore functions
+ // Import your Firebase Firestore configuration
 
 
 
@@ -17447,7 +17452,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 // Set root element for modal accessibility
-react_modal__WEBPACK_IMPORTED_MODULE_1___default().setAppElement("#___gatsby");
+react_modal__WEBPACK_IMPORTED_MODULE_2___default().setAppElement("#___gatsby");
 const PortfolioPage = ({
   data
 }) => {
@@ -17463,11 +17468,80 @@ const PortfolioPage = ({
     0: isZoomed,
     1: setIsZoomed
   } = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  const {
+    0: sortCriteria,
+    1: setSortCriteria
+  } = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)("Recent");
+  const {
+    0: sortedImages,
+    1: setSortedImages
+  } = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
+  const {
+    0: images,
+    1: setImages
+  } = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]); // Store images with metadata
 
-  // Fetch images
-  const images = data.allFile.edges.map(({
-    node
-  }) => (0,gatsby_plugin_image__WEBPACK_IMPORTED_MODULE_8__.getImage)(node.childImageSharp));
+  // Function to add dateAdded to items in Firestore if not already present
+  const addDateToItems = async () => {
+    const querySnapshot = await (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_3__.getDocs)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_3__.collection)(_firebaseConfig__WEBPACK_IMPORTED_MODULE_4__.db, "projects"));
+    querySnapshot.forEach(async document => {
+      const docRef = (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_3__.doc)(_firebaseConfig__WEBPACK_IMPORTED_MODULE_4__.db, "projects", document.id);
+      if (!document.data().dateAdded) {
+        // Add dateAdded field if it doesn't exist
+        await (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_3__.updateDoc)(docRef, {
+          dateAdded: (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_3__.serverTimestamp)()
+        });
+        console.log(`Added date to project ID: ${document.id}`);
+      }
+    });
+  };
+
+  // Fetch gallery items and additional metadata from Firestore
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    const fetchImagesWithMetadata = async () => {
+      await addDateToItems(); // Ensure all items have dateAdded
+
+      const firestoreImages = [];
+      const querySnapshot = await (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_3__.getDocs)((0,firebase_firestore__WEBPACK_IMPORTED_MODULE_3__.collection)(_firebaseConfig__WEBPACK_IMPORTED_MODULE_4__.db, "projects"));
+      querySnapshot.forEach(doc => {
+        const imageNode = data.allFile.edges.find(edge => edge.node.relativePath === doc.id);
+
+        // Debugging logs
+        console.log("Firestore Document ID:", doc.id);
+        console.log("Image Node:", imageNode);
+        if (imageNode) {
+          firestoreImages.push({
+            id: doc.id,
+            image: (0,gatsby_plugin_image__WEBPACK_IMPORTED_MODULE_10__.getImage)(imageNode.node.childImageSharp),
+            dateAdded: doc.data().dateAdded ? new Date(doc.data().dateAdded.seconds * 1000) : new Date(),
+            popularity: doc.data().likes || 0,
+            isFavorite: doc.data().isFavorite || false
+          });
+        }
+      });
+      console.log("Fetched Firestore Images:", firestoreImages);
+      setImages(firestoreImages);
+      setSortedImages(firestoreImages); // Set initial sorted images
+    };
+    fetchImagesWithMetadata();
+  }, [data.allFile.edges]);
+
+  // Sort images based on the selected criteria
+  // Sort images based on the selected criteria
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    let sorted;
+    if (sortCriteria === "Recent") {
+      sorted = [...images].sort((a, b) => b.dateAdded - a.dateAdded); // Most recent first
+    } else if (sortCriteria === "Popular") {
+      sorted = [...images].sort((a, b) => b.popularity - a.popularity); // Most likes first
+    } else if (sortCriteria === "Favorites") {
+      sorted = [...images].filter(image => image.isFavorite);
+    }
+    setSortedImages(sorted);
+  }, [sortCriteria, images]);
+  const handleSortChange = event => {
+    setSortCriteria(event.target.value);
+  };
 
   // Open modal with the selected image
   const openModal = index => {
@@ -17510,31 +17584,12 @@ const PortfolioPage = ({
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [modalIsOpen]);
-
-  // Portfolio categories tab interactivity
-  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
-    // Toggle active class on tab click
-    document.querySelectorAll(".portfolio-categories .tab").forEach(tab => {
-      tab.addEventListener("click", function () {
-        document.querySelector(".portfolio-categories .tab.active").classList.remove("active");
-        this.classList.add("active");
-        // Optional: Add filtering functionality for categories
-      });
-    });
-
-    // Cleanup listeners on component unmount
-    return () => {
-      document.querySelectorAll(".portfolio-categories .tab").forEach(tab => {
-        tab.removeEventListener("click", () => {});
-      });
-    };
-  }, []);
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_components_Header__WEBPACK_IMPORTED_MODULE_5__["default"], null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_components_Header__WEBPACK_IMPORTED_MODULE_7__["default"], null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: `content ${modalIsOpen ? "blurred" : ""}`
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "profile-header"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("img", {
-    src: _profileimage_my_image_jpg__WEBPACK_IMPORTED_MODULE_3__["default"],
+    src: _profileimage_my_image_jpg__WEBPACK_IMPORTED_MODULE_6__["default"],
     alt: "Profile Picture",
     className: "profile-image"
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
@@ -17570,25 +17625,33 @@ const PortfolioPage = ({
   }, "AI Generated")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "portfolio-controls"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("select", {
-    className: "sort-dropdown"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", null, "Sort by: Recent"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", null, "Sort by: Popular"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", null, "Sort by: Favorites")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
+    className: "sort-dropdown",
+    onChange: handleSortChange,
+    value: sortCriteria
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    value: "Recent"
+  }, "Sort by: Recent"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    value: "Popular"
+  }, "Sort by: Popular"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("option", {
+    value: "Favorites"
+  }, "Sort by: Favorites")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
     className: "boost-button"
   }, "Boost Project"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "gallery-container"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("h1", null, "My Isometric Illustrations"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("p", null, "Explore my collection of isometric illustrations below."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "gallery-grid"
-  }, images.map((image, index) => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+  }, sortedImages.map((image, index) => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     key: index,
     className: "gallery-item",
     onClick: () => openModal(index)
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(gatsby_plugin_image__WEBPACK_IMPORTED_MODULE_8__.GatsbyImage, {
-    image: image,
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(gatsby_plugin_image__WEBPACK_IMPORTED_MODULE_10__.GatsbyImage, {
+    image: image.image,
     alt: "Isometric Illustration"
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
-    className: "like-icon-container"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_LikeButton__WEBPACK_IMPORTED_MODULE_7__["default"], {
-    projectId: `project-${index}`
-  }))))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_components_Footer__WEBPACK_IMPORTED_MODULE_6__["default"], null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react_modal__WEBPACK_IMPORTED_MODULE_1___default()), {
+    className: "like-button-hover"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_LikeButton__WEBPACK_IMPORTED_MODULE_9__["default"], {
+    projectId: image.id
+  }))))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_components_Footer__WEBPACK_IMPORTED_MODULE_8__["default"], null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react_modal__WEBPACK_IMPORTED_MODULE_2___default()), {
     isOpen: modalIsOpen,
     onRequestClose: closeModal,
     contentLabel: "Image Lightbox",
@@ -17602,8 +17665,8 @@ const PortfolioPage = ({
   }, images[currentIndex] && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
     className: "modal-image-container",
     onClick: toggleZoom
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(gatsby_plugin_image__WEBPACK_IMPORTED_MODULE_8__.GatsbyImage, {
-    image: images[currentIndex],
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(gatsby_plugin_image__WEBPACK_IMPORTED_MODULE_10__.GatsbyImage, {
+    image: images[currentIndex].image,
     alt: "Enlarged Isometric Illustration"
   })))));
 };
@@ -61347,21 +61410,6 @@ if (false) {} else {
   module.exports = __webpack_require__(/*! ./cjs/scheduler.development.js */ "./node_modules/scheduler/cjs/scheduler.development.js");
 }
 
-
-/***/ }),
-
-/***/ "./src/profileimage/heart.png":
-/*!************************************!*\
-  !*** ./src/profileimage/heart.png ***!
-  \************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ("/static/heart-2e91967bb7ae1364337e1b6b78bdb13a.png");
 
 /***/ }),
 
