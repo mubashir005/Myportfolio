@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { graphql } from "gatsby";
 import { GatsbyImage, getImage } from "gatsby-plugin-image";
+import { Helmet } from "react-helmet"; // Import Helmet
 import Modal from "react-modal";
 import {
   collection,
@@ -15,8 +16,12 @@ import { db } from "../../firebaseConfig";
 import "../styles/gallery.css";
 import myImage from "../profileimage/my_image.jpg";
 import Header from "../components/Header";
+import FeedbackSidebar from "../components/FeedbackSidebar";
 import Footer from "../components/Footer";
 import LikeButton from "../../LikeButton";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes, faCommentDots } from "@fortawesome/free-solid-svg-icons"; // Import FontAwesome icons
+import SlidingPanel from 'react-sliding-side-panel'; // Import the sliding panel
 
 // Set root element for modal accessibility
 Modal.setAppElement("#___gatsby");
@@ -30,6 +35,8 @@ const PortfolioPage = ({ data }) => {
   const [name, setName] = useState(""); // New state for name input
   const [feedback, setFeedback] = useState(""); // Input for feedback
   const [comments, setComments] = useState([]); // List of comments for the current project
+  const [openPanel, setOpenPanel] = useState(false); // Control the sidebar visibility
+  
 
   const uploadImagesToFirebase = async () => {
     const imageUploadPromises = data.allFile.edges.map(async ({ node }) => {
@@ -112,26 +119,53 @@ const PortfolioPage = ({ data }) => {
     setIsZoomed(!isZoomed); // Zoom only the image
   };
 
-  const handleAddFeedback = async () => {
-    if (!feedback.trim() || !name.trim()) return; // Prevent empty submission
-
-    const projectId = sortedImages[currentIndex]?.id;
+  // Updated handleAddFeedback to accept name, feedback, and rating
+  const handleAddFeedback = async (name, feedback, rating, imageIndex) => {
+    if (!feedback.trim() || !name.trim() || rating === 0) return;
+  
+    const projectId = images[imageIndex]?.id;
     const projectRef = doc(db, "projects", projectId);
-
+  
     const newComment = {
-      name, // Save name
+      name,
       text: feedback,
+      rating,
       timestamp: new Date(),
     };
-
+  
+    // Step 1: Fetch the current comments for this specific project from Firestore
+    const projectSnapshot = await getDoc(projectRef);
+    const existingComments = projectSnapshot.exists()
+      ? projectSnapshot.data().comments || [] // Existing comments if any
+      : [];
+  
+    // Step 2: Update Firestore by appending the new comment to the existing comments
     await updateDoc(projectRef, {
-      comments: [...comments, newComment],
+      comments: [...existingComments, newComment],
     });
-
-    setComments((prevComments) => [...prevComments, newComment]);
-    setName(""); // Clear name input
-    setFeedback(""); // Clear feedback input
+  
+    // Step 3: Re-fetch the updated comments from Firestore
+    const updatedSnapshot = await getDoc(projectRef);
+    const updatedComments = updatedSnapshot.exists()
+      ? updatedSnapshot.data().comments
+      : [];
+  
+    // Step 4: Update the local `images` array with the new comments
+    setImages((prevImages) => {
+      const updatedImages = prevImages.map((image, index) => {
+        if (index === imageIndex) {
+          return {
+            ...image,
+            comments: updatedComments, // Set the updated comments for the current image
+          };
+        }
+        return image;
+      });
+      return updatedImages;
+    });
   };
+  
+  
 
   // Keyboard navigation for modal
   useEffect(() => {
@@ -159,6 +193,12 @@ const PortfolioPage = ({ data }) => {
 
   return (
     <>
+      <Helmet>
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+        />
+      </Helmet>
       <Header />
       <div className={`content ${modalIsOpen ? "blurred" : ""}`}>
         {/* Profile Section */}
@@ -172,7 +212,7 @@ const PortfolioPage = ({ data }) => {
             </p>
             <div className="profile-buttons">
               <button className="get-in-touch">Get in touch</button>
-              <button className="edit-profile">Edit Profile</button>
+              <button className="edit-profile">Upwork Profile</button>
               <button className="more-options">...</button>
             </div>
           </div>
@@ -198,7 +238,7 @@ const PortfolioPage = ({ data }) => {
               <option value="Recent">Sort by: Recent</option>
               <option value="Popular">Sort by: Popular</option>
             </select>
-            <button className="boost-button">Boost Project</button>
+            <button className="boost-button">Get Offer</button>
           </div>
         </div>
 
@@ -226,6 +266,7 @@ const PortfolioPage = ({ data }) => {
       <Footer />
 
       {/* Modal */}
+      {/* Modal */}
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
@@ -234,12 +275,11 @@ const PortfolioPage = ({ data }) => {
         overlayClassName="overlay"
       >
         <button onClick={closeModal} className="close-button">
-          ×
+          <FontAwesomeIcon icon={faTimes} />
         </button>
         <div className="modal-content">
           {sortedImages[currentIndex] && (
             <>
-              {/* Image Section */}
               <div className="modal-image-container" onClick={toggleZoom}>
                 <GatsbyImage
                   image={sortedImages[currentIndex].image}
@@ -250,38 +290,24 @@ const PortfolioPage = ({ data }) => {
                 </div>
               </div>
 
-              {/* Feedback Section */}
-              <div className="feedback-section">
-                <h3>Feedback</h3>
-                <input
-                  type="text"
-                  placeholder="Enter your name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-                <input
-                  type="text"
-                  placeholder="Share your thoughts"
-                  value={feedback}
-                  onChange={(e) => setFeedback(e.target.value)}
-                />
-                <button onClick={handleAddFeedback}>Leave feedback</button>
-
-                {/* Display Comments */}
-                <div className="comments-list">
-                  {comments.map((comment, idx) => (
-                    <div key={idx} className="comment-item">
-                      <strong>{comment.name}</strong>
-                      <p>{comment.text}</p>
-                    </div>
-                  ))}
-                </div>
+              {/* Add a wrapper div with an ID for FeedbackSidebar */}
+              <div id="feedback-container">
+              <FeedbackSidebar
+                images={images}
+                currentIndex={currentIndex}
+                handleAddFeedback={(name, feedback, rating) => handleAddFeedback(name, feedback, rating, currentIndex)}
+              />
               </div>
             </>
           )}
         </div>
-      </Modal>
+  
+</Modal>
+      
+      
+      
     </>
+    
   );
 };
 
