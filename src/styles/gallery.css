@@ -241,6 +241,7 @@ body {
 /* Show Like Button on Hover */
 .gallery-item:hover .like-button-hover {
   opacity: 1;
+  transform: scale(1.05);
 }
 
 /* Style for Like Button */
@@ -322,6 +323,7 @@ body {
 }
 
 /* Overlay Styling */
+/* Overlay Styling */
 .overlay {
   position: fixed;
   top: 0;
@@ -329,9 +331,10 @@ body {
   width: 100vw;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.8); /* Dark semi-transparent background */
-  z-index: 1000;
+  z-index: 1000; /* Ensure it's beneath the modal but above the main content */
 }
 
+/* Modal Styling */
 /* Modal Styling */
 .modal {
   position: fixed;
@@ -343,7 +346,7 @@ body {
   max-width: none; /* Remove max-width constraint */
   max-height: none; /* Remove max-height constraint */
   background-color: rgba(255, 255, 255, 0.95); /* Slightly opaque white background */
-  z-index: 1010;
+  z-index: 1010; /* Ensure it's above the overlay */
   overflow-y: auto; /* Allow scrolling for larger content */
   border-radius: 8px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3); /* Add shadow for depth */
@@ -351,6 +354,17 @@ body {
   align-items: center;
   justify-content: center;
   padding: 20px;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8); /* Dark semi-transparent background */
+  z-index: 1000; /* Ensure it’s beneath the sliding pane */
 }
 
 .modal.zoomed {
@@ -367,49 +381,58 @@ body {
 
 /* Inner Modal Content */
 .modal-content {
-  width: 100%;
-  height: 100%;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  padding: 10px; /* Additional padding inside modal */
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px; /* Limit width of modal content */
+  padding: 20px;
+  
 }
 
-/* Image Container */
+/* Image Container (inside the modal) */
 .modal-image-container {
   position: relative;
-  width: 90%; /* Keep some space from the modal edges */
-  max-width: 1000px; /* Define a fixed max width for consistency */
-  max-height: 80vh; /* Set a fixed max height */
+  width: 90%; /* Initial width of the image */
+  max-width: 1300px; /* Define max width */
+  max-height: 80vh; /* Fixed max height */
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: zoom-in;
   transition: transform 0.3s ease;
   overflow: hidden;
-  padding: 1px; /* Add padding to create space from edges */
-  box-sizing: border-box; /* Ensure padding doesn’t expand size */
-  border-radius: 8px; /* Optional: Rounded corners */
-  background: white; /* Add background to avoid image blending with modal */
+  padding: 1px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  background: white;
 }
 
 .modal.zoomed .modal-image-container {
   cursor: zoom-out;
   width: 100%;
   height: 100%;
-  max-width: none; /* Remove max-width in zoomed state */
-  max-height: none; /* Remove max-height in zoomed state */
-  padding: 0; /* Remove padding in zoomed state */
+  max-width: none; /* Remove the width limit when zoomed */
+  max-height: none; /* Remove the height limit when zoomed */
+  padding: 0;
 }
 
+/* Ensure the image itself zooms */
 .modal-image-container img {
   width: 100%;
   height: auto;
+  object-fit: contain;
   max-width: 100%;
   max-height: 100%;
-  object-fit: contain;
-  border-radius: 8px; /* Keep border radius consistent with container */
+  transition: transform 0.3s ease; /* Smooth transition for zoom */
+  -webkit-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+}
+
+.modal-image-container.zoomed img {
+  transform: scale(1.5); /* Scale the image when zoomed in */
 }
 
 /* Close Button */
@@ -447,7 +470,215 @@ body {
   display: block;
 }
 
+/* Position the Like Button at the Top Right */
+.modal-header {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
+/* Feedback Sidebar Styles */
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: -10%; /* Fully off-screen initially */
+  width: 300px;
+  height: 100%;
+  background-color: #fff;
+  box-shadow: -2px 0px 5px rgba(0, 0, 0, 0.1);
+  transition: right 0.3s ease; /* Smooth transition for sidebar */
+  z-index: 1000;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; /* Enable scroll within the sidebar if content exceeds */
+}
+
+/* Sliding Pane Overlay */
+.sliding-pane-overlay {
+  background-color: transparent !important; /* Make it transparent to avoid interference */
+  z-index: 1015 !important; /* Place it above the modal overlay */
+}
+
+
+.sidebar.open {
+  right: 0; /* Sidebar slides in */
+}
+
+/* Feedback Sidebar Styles */
+.sidebar-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.close-sidebar {
+  align-self: flex-start;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  color: #333;
+}
+
+.feedback-section {
+  margin-top: 20px;
+}
+
+.feedback-section input,
+.feedback-section textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.feedback-section button {
+  padding: 10px 20px;
+  border-radius: 20px;
+  border: none;
+  background-color: #333;
+  color: #fff;
+  cursor: pointer;
+}
+
+.feedback-section button:hover {
+  background-color: #444;
+}
+
+/* Modern Comments List */
+.comments-list {
+  margin-top: 20px;
+  max-height: 400px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Comment Item with Modern Card Design */
+.comment-item {
+  display: flex;
+  gap: 15px;
+  padding: 15px;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Avatar for Commenter */
+.comment-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #fff;
+  font-weight: bold;
+}
+
+/* Comment Content */
+.comment-content {
+  flex: 1;
+}
+
+.comment-name {
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.comment-rating {
+  color: #ffcc00;
+  font-size: 14px;
+}
+
+.comment-text {
+  font-size: 13px;
+  color: #555;
+  margin-top: 5px;
+}
+
+/* Button to Open Sidebar */
+.open-feedback-btn {
+  position: absolute; /* Keep it within the modal */
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  background-color: #333;
+  color: #fff;
+  border-radius: 30px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  z-index: 1020; /* Higher than the modal to ensure it appears on top */
+}
+
+.open-feedback-btn:hover {
+  background-color: #444;
+}
+
+/* Star Rating Styles */
+.star-rating {
+  display: flex;
+  gap: 5px;
+  margin: 10px 0;
+}
+
+.star {
+  font-size: 24px;
+  color: #ddd;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.star.selected {
+  color: #ffcc00;
+}
+
+/* Star Rating Display in Comments */
+.comment-rating {
+  margin-top: 5px;
+  font-size: 16px;
+  color: #ffcc00;
+}
+
+
+
+
+/* Like Button in Modal */
+.modal-like-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 24px;
+  color: #FF5A5F;
+  cursor: pointer;
+}
+
+/* Responsive Adjustments for Modal */
+@media (max-width: 768px) {
+  .modal-content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .feedback-section {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid #eee;
+    margin-top: 20px;
+  }
+}
 
 
 /* Portfolio Header */

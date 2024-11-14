@@ -10,16 +10,24 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.6.0",
+    "@fortawesome/free-solid-svg-icons": "^6.6.0",
+    "@fortawesome/react-fontawesome": "^0.2.2",
+    "@syncfusion/ej2-react-buttons": "^27.1.58",
+    "@syncfusion/ej2-react-navigations": "^27.1.58",
     "firebase": "^11.0.1",
-    "gatsby": "^5.13.7",
-    "gatsby-plugin-image": "^3.13.1",
-    "gatsby-plugin-sharp": "^5.13.1",
-    "gatsby-source-filesystem": "^5.13.1",
-    "gatsby-transformer-sharp": "^5.13.1",
+    "gatsby": "^5.14.0",
+    "gatsby-plugin-image": "^3.14.0",
+    "gatsby-plugin-sharp": "^5.14.0",
+    "gatsby-source-filesystem": "^5.14.0",
+    "gatsby-transformer-sharp": "^5.14.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-helmet": "^6.1.0",
     "react-modal": "^3.16.1",
-    "react-modal-image": "^2.6.0"
+    "react-modal-image": "^2.6.0",
+    "react-sliding-pane": "^7.3.0",
+    "react-sliding-side-panel": "^2.0.3"
   },
   "devDependencies": {
     "gatsby-cli": "^5.13.1"

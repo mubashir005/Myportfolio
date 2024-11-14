@@ -1,10 +1,10 @@
 var plugins = [{
       name: 'gatsby-plugin-image',
-      plugin: require('C:/Users/mubas/OneDrive/Desktop/task_responsive/Myportfolio/node_modules/gatsby-plugin-image/gatsby-ssr.js'),
+      plugin: require('C:/Users/mubas/OneDrive/Desktop/mywebsite/Sorting_buttons/Myportfolio/node_modules/gatsby-plugin-image/gatsby-ssr.js'),
       options: {"plugins":[]},
     },{
       name: 'partytown',
-      plugin: require('C:/Users/mubas/OneDrive/Desktop/task_responsive/Myportfolio/node_modules/gatsby/dist/internal-plugins/partytown/gatsby-ssr.js'),
+      plugin: require('C:/Users/mubas/OneDrive/Desktop/mywebsite/Sorting_buttons/Myportfolio/node_modules/gatsby/dist/internal-plugins/partytown/gatsby-ssr.js'),
       options: {"plugins":[]},
     }]
 /* global plugins */
