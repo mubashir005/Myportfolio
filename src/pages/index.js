@@ -235,7 +235,9 @@ const PortfolioPage = ({ data }) => {
             </p>
             <div className="profile-buttons">
               <button className="get-in-touch">Get in touch</button>
-              <button className="edit-profile">Upwork Profile</button>
+              <a href="https://www.upwork.com/freelancers/~0179dc344f6192cef1?mp_source=share" target="_blank" rel="noopener noreferrer">
+                <button className="edit-profile">Upwork Profile</button>
+              </a>
               <button className="more-options">...</button>
             </div>
           </div>
