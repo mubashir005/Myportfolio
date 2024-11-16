@@ -180,6 +180,14 @@ const PortfolioPage = ({ data }) => {
     if (currentPage<totalPages)
     {
       setCurrentPage (currentPage+1);
+      // Scroll to the top of the page
+    window.scrollTo({
+      top:20,
+      left:0,
+      behavior:"smooth",
+    }
+
+    )
     }
   };
 
