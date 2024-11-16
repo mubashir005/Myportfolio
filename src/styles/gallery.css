@@ -220,7 +220,7 @@ body {
   cursor: pointer;
   border-radius: 8px;
   overflow: hidden;
-  background: #fff;
+  background: #ffffff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s ease;
   position: relative;
@@ -341,19 +341,17 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 90vw; /* Full viewport width */
-  height: 90vh; /* Full viewport height */
-  max-width: none; /* Remove max-width constraint */
-  max-height: none; /* Remove max-height constraint */
+  width: 90vw; /* Take up most of the viewport width */
+  height: 90vh; /* Take up most of the viewport height */
   background-color: rgba(255, 255, 255, 0.95); /* Slightly opaque white background */
-  z-index: 1010; /* Ensure it's above the overlay */
-  overflow-y: auto; /* Allow scrolling for larger content */
+  z-index: 1010; /* Above overlay */
+  overflow: auto; /* Enable scrolling if content exceeds */
   border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3); /* Add shadow for depth */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
   display: flex;
-  align-items: center;
   justify-content: center;
-  padding: 20px;
+  align-items: center;
+  padding: 10px;
 }
 
 /* Modal Overlay */
@@ -390,40 +388,34 @@ body {
   
 }
 
-/* Image Container (inside the modal) */
 .modal-image-container {
   position: relative;
-  width: 90%; /* Initial width of the image */
-  max-width: 1300px; /* Define max width */
-  max-height: 80vh; /* Fixed max height */
+  max-width: 100%; /* Ensure it doesn’t exceed the modal width */
+  height: auto; /* Allow height to adjust based on content */
+  max-height: 100vh; /* Restrict height to viewport height */
+  overflow-y: auto; /* Enable vertical scrolling for tall images */
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start; /* Align image to the top */
   cursor: zoom-in;
-  transition: transform 0.3s ease;
-  overflow: hidden;
-  padding: 1px;
-  box-sizing: border-box;
-  border-radius: 8px;
-  background: white;
 }
 
 .modal.zoomed .modal-image-container {
   cursor: zoom-out;
   width: 100%;
-  height: 100%;
+ 
   max-width: none; /* Remove the width limit when zoomed */
   max-height: none; /* Remove the height limit when zoomed */
   padding: 0;
 }
 
-/* Ensure the image itself zooms */
+/* Ensure the image fits properly */
 .modal-image-container img {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  max-width: 100%;
-  max-height: 100%;
+  width: auto; /* Maintain aspect ratio */
+  max-width: 100%; /* Restrict width to fit the modal */
+  height: auto; /* Allow image height to adjust automatically */
+  max-height: 100%; /* Ensure image doesn't exceed the container */
+  object-fit: contain; /* Maintain aspect ratio */
   transition: transform 0.3s ease; /* Smooth transition for zoom */
   -webkit-user-drag: none;
   -moz-user-drag: none;
@@ -434,6 +426,7 @@ body {
 .modal-image-container.zoomed img {
   transform: scale(1.5); /* Scale the image when zoomed in */
 }
+
 
 /* Close Button */
 .close-button {
@@ -481,6 +474,7 @@ body {
 }
 
 /* Feedback Sidebar Styles */
+/* Feedback Sidebar Styles */
 .sidebar {
   position: fixed;
   top: 0;
@@ -503,12 +497,11 @@ body {
   z-index: 1015 !important; /* Place it above the modal overlay */
 }
 
-
 .sidebar.open {
   right: 0; /* Sidebar slides in */
 }
 
-/* Feedback Sidebar Styles */
+/* Feedback Sidebar Content */
 .sidebar-content {
   padding: 20px;
   display: flex;
@@ -609,10 +602,11 @@ body {
 }
 
 /* Button to Open Sidebar */
+/* Fixed Feedback Button */
 .open-feedback-btn {
-  position: absolute; /* Keep it within the modal */
-  bottom: 20px;
-  right: 20px;
+  position: fixed; /* Change from absolute to fixed */
+  bottom: 20px; /* Distance from the bottom of the viewport */
+  right: 20px; /* Distance from the right of the viewport */
   padding: 10px 20px;
   background-color: #333;
   color: #fff;
@@ -620,7 +614,7 @@ body {
   font-size: 14px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  z-index: 1020; /* Higher than the modal to ensure it appears on top */
+  z-index: 1070; /* Ensure it appears above other elements */
 }
 
 .open-feedback-btn:hover {
@@ -652,17 +646,15 @@ body {
   color: #ffcc00;
 }
 
-
-
-
 /* Like Button in Modal */
 .modal-like-button {
-  position: absolute;
-  top: 15px;
-  right: 15px;
+  position: absolute; /* Position it relative to the modal */
+  top: 20px; /* Place it at the top-right of the modal */
+  right: 20px;
   font-size: 24px;
-  color: #FF5A5F;
+  color: #ff5a5f; /* Like button color */
   cursor: pointer;
+  z-index: 1020; /* Ensure it stays above the modal content */
 }
 
 /* Responsive Adjustments for Modal */
@@ -677,6 +669,56 @@ body {
     border-left: none;
     border-top: 1px solid #eee;
     margin-top: 20px;
+  }
+}
+
+/* Responsive Modal Adjustments */
+@media (max-width: 768px) {
+  .modal {
+    width: 100vw;
+    height: 100vh;
+    padding: 10px;
+    border-radius: 0; /* Remove rounded edges on smaller screens */
+  }
+
+  .modal-image-container {
+    max-height: 100%; /* Allow image to take full modal height */
+    overflow-y: auto; /* Scrollable content */
+  }
+}
+
+@media (max-width: 480px) {
+  .modal {
+    width: 100vw;
+    height: 100vh;
+    padding: 5px;
+  }
+
+  .modal-image-container {
+    max-height: 100%; /* Allow scrolling on very small screens */
+  }
+}
+
+/* Responsive Sidebar Adjustments */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 80%; /* Sidebar takes up more width on smaller screens */
+    right: -80%; /* Fully off-screen initially */
+  }
+
+  .sidebar.open {
+    right: 0; /* Slide in on smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 100%; /* Sidebar takes full width on very small screens */
+    right: -100%; /* Fully off-screen initially */
+  }
+
+  .sidebar.open {
+    right: 0; /* Slide in on small screens */
   }
 }
 
@@ -790,4 +832,27 @@ body {
 
 .boost-button:hover {
   background-color: #444;
+}
+
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+.pagination-button {
+  padding: 10px 20px;
+  background-color: #007acc;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.pagination-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
 }

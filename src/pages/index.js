@@ -30,12 +30,15 @@ const PortfolioPage = ({ data }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false); // Track zoom state of the image
-  const [sortCriteria, setSortCriteria] = useState("Recent");
+  const [sortCriteria, setSortCriteria] = useState("Popular");
   const [images, setImages] = useState([]);
   const [name, setName] = useState(""); // New state for name input
   const [feedback, setFeedback] = useState(""); // Input for feedback
   const [comments, setComments] = useState([]); // List of comments for the current project
   const [openPanel, setOpenPanel] = useState(false); // Control the sidebar visibility
+  const[currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20; //number of image per page
+
   
 
   const uploadImagesToFirebase = async () => {
@@ -165,7 +168,27 @@ const PortfolioPage = ({ data }) => {
     });
   };
   
-  
+  const paginatedImages = sortedImages.slice(
+    (currentPage-1)*itemsPerPage,//Start index
+    currentPage*itemsPerPage//End index
+  );
+
+  const totalPages = Math.ceil(sortedImages.length/itemsPerPage)
+
+  const goToNextPage =() =>
+  {
+    if (currentPage<totalPages)
+    {
+      setCurrentPage (currentPage+1);
+    }
+  };
+
+  const goToPreviousPage = () =>{
+    if (currentPage>1)
+    {
+      setCurrentPage(currentPage-1);
+    }
+  };
 
   // Keyboard navigation for modal
   useEffect(() => {
@@ -247,11 +270,11 @@ const PortfolioPage = ({ data }) => {
           <h1>My Isometric Illustrations</h1>
           <p>Explore my collection of isometric illustrations below.</p>
           <div className="gallery-grid">
-            {sortedImages.map((image, index) => (
+          {paginatedImages.map((image, index) => (
               <div
                 key={index}
                 className="gallery-item"
-                onClick={() => openModal(index)}
+                onClick={() => openModal(index + (currentPage - 1) * itemsPerPage)}
               >
                 <GatsbyImage image={image.image} alt="Isometric Illustration" />
                 {/* Like Button on Hover */}
@@ -262,6 +285,26 @@ const PortfolioPage = ({ data }) => {
             ))}
           </div>
         </div>
+        <div className="pagination-controls">
+            <button
+              onClick={goToPreviousPage}
+              disabled={currentPage === 1}
+              className="pagination-button"
+            >
+              Previous
+            </button>
+            <span>
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={goToNextPage}
+              disabled={currentPage === totalPages}
+              className="pagination-button"
+            >
+              Next
+            </button>
+          </div>
+
       </div>
       <Footer />
 
