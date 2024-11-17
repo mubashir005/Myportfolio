@@ -32,6 +32,12 @@ body {
   width: 80px;
   height: 80px;
   border-radius: 50%;
+  border: 3px solid #333; /* Adds a subtle border for emphasis */
+  transition: transform 0.3s ease;
+}
+
+.profile-image:hover {
+  transform: scale(1.1); /* Slight zoom-in effect on hover */
 }
 
 .profile-info {
@@ -40,9 +46,10 @@ body {
 }
 
 .profile-name {
-  font-size: 24px;
+  font-size: 28px; /* Slightly larger for prominence */
   font-weight: bold;
   color: #0d0c22;
+  text-transform: uppercase; /* Makes the name stand out */
 }
 
 .profile-location {
@@ -55,36 +62,67 @@ body {
   color: #333;
 }
 
+/* Profile Buttons Container */
 .profile-buttons {
   display: flex;
   gap: 10px;
   margin-top: 10px;
 }
 
-.get-in-touch, .edit-profile, .more-options {
+/* Button Styles */
+.get-in-touch, 
+.more-options, 
+.upwork-button {
   padding: 8px 16px;
   border-radius: 20px;
   border: none;
   font-size: 14px;
   cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, transform 0.2s ease;
 }
 
+/* Get in Touch Button */
 .get-in-touch {
-  background-color: #333;
-  color: #fff;
+  background-color: #000000; /* Upwork Primary Green */
+  color: #ffffff; /* White Text */
 }
 
-.edit-profile {
-  background-color: #f4f4f9;
-  color: #333;
+.get-in-touch:hover {
+  background-color: #18c300; /* Light Green Hover */
+  transform: translateY(-2px); /* Lift Effect */
 }
 
+/* Upwork Button Styled as Link */
+.upwork-button {
+  display: inline-block;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 20px;
+  font-size: 14px;
+  background-color: #14a800; /* Dark Background */
+  color: #ffffff; /* White Text */
+  /* Green Border */
+}
+
+.upwork-button:hover {
+  background-color: #14a800; /* Primary Green Hover */
+  color: #ffffff; /* White Text */
+}
+
+/* More Options Button */
 .more-options {
   background-color: transparent;
-  color: #333;
+  color: #14a800; /* Primary Green */
   font-size: 20px;
   line-height: 1;
 }
+
+.more-options:hover {
+  color: #18c300; /* Light Green Hover */
+}
+
+
 
 /* Footer */
 .footer {
@@ -128,7 +166,7 @@ body {
 .gallery-grid {
   display: grid;
   gap: 50px;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, 1fr); /* 4 equal columns */
   max-width: 100%;
   margin: 0 auto;
 }
@@ -153,9 +191,10 @@ body {
 }
 
 @media (max-width: 768px) {
-  .gallery-grid {
-    grid-template-columns: 1fr;
-  }
+  
+    .gallery-grid {
+      grid-template-columns: 1fr; /* 1 column for small screens */
+    }
 
   .profile-buttons {
     flex-direction: column;
@@ -217,15 +256,21 @@ body {
 
 /* Gallery Item */
 .gallery-item {
-  cursor: pointer;
-  border-radius: 8px;
-  overflow: hidden;
-  background: #ffffff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease;
   position: relative;
+  width: 100%; /* Takes full width of the column */
+  aspect-ratio: 1/1; /* Ensures a square shape */
+  border-radius: 8px; /* Optional for rounded corners */
+  overflow: hidden; /* Ensures content doesn't overflow */
+  background-color: #ffffff; /* Placeholder for loading */
+  border: 1px solid #e0e0e0; /* Subtle border around the image */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
+.gallery-item:hover {
+  transform: scale(1.02); /* Slightly enlarges the entire gallery item */
+  transition: transform 0.3s ease-in-out;
+}
 
 /* Adjust Like Button Hover */
 .like-button-hover {
@@ -239,9 +284,9 @@ body {
 }
 
 /* Show Like Button on Hover */
+/* Show Like Button on Hover */
 .gallery-item:hover .like-button-hover {
-  opacity: 1;
-  transform: scale(1.05);
+  opacity: 1; /* Ensure the like button appears on hover */
 }
 
 /* Style for Like Button */
@@ -269,7 +314,7 @@ body {
 /* Like Count Styling */
 .like-count {
   font-size: 12px; /* Smaller text */
-  color: #333;
+  color: #ffffff;
   margin-left: 4px; /* Space between icon and count */
 }
 
@@ -286,20 +331,41 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.05);
+  
   transition: background 0.3s;
 }
 
 .gallery-item:hover::after {
-  background: rgba(0, 0, 0, 0.15);
+ 
+  height: 100%; /* Adjust height of the gradient */
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0)); /* Adjusted opacity */
 }
 
 /* Image Styling */
 .gallery-item img, .gallery-item .gatsby-image-wrapper {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  border-radius: 8px;
+  object-fit: cover; /* Ensures images fill the container */
+  border-radius: 8px; /* Matches the gallery-item border-radius */
+}
+
+.image-title-overlay {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.gallery-item:hover .image-title-overlay {
+  opacity: 1; /* Show on hover */
+  transform: translate(-50%, 0);
 }
 
 /* Remove outline from modal and buttons when focused */

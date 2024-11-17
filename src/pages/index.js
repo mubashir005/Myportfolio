@@ -76,6 +76,7 @@ const PortfolioPage = ({ data }) => {
           firestoreImages.push({
             id: doc.id,
             image: getImage(imageNode.node.childImageSharp),
+            title: doc.data().title || "",
             dateAdded: doc.data().dateAdded
               ? new Date(doc.data().dateAdded.seconds * 1000)
               : new Date(),
@@ -239,15 +240,20 @@ const PortfolioPage = ({ data }) => {
             <h2 className="profile-name">MUBASHIR UI Hassan</h2>
             <p className="profile-location">Pakistan</p>
             <p className="profile-description">
-              Brand / Graphic Design, Illustration, UI / Visual Design
+            Transforming concepts into captivating visuals for modern brands
             </p>
             <div className="profile-buttons">
-              <button className="get-in-touch">Get in touch</button>
-              <a href="https://www.upwork.com/freelancers/~0179dc344f6192cef1?mp_source=share" target="_blank" rel="noopener noreferrer">
-                <button className="edit-profile">Upwork Profile</button>
-              </a>
-              <button className="more-options">...</button>
-            </div>
+                <button className="get-in-touch">Get in touch</button>
+                <a
+                  href="https://www.upwork.com/freelancers/~0179dc344f6192cef1?mp_source=share"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="upwork-button"
+                >
+                  Upwork Profile
+                </a>
+                <button className="more-options">...</button>
+              </div>
           </div>
         </div>
 
@@ -287,6 +293,10 @@ const PortfolioPage = ({ data }) => {
                 onClick={() => openModal(index + (currentPage - 1) * itemsPerPage)}
               >
                 <GatsbyImage image={image.image} alt="Isometric Illustration" />
+                {/* Title Hover Overlay */}
+                <div className="image-title-overlay">
+                  {image.title}
+                </div>
                 {/* Like Button on Hover */}
                 <div className="like-button-hover">
                   <LikeButton projectId={image.id} />
