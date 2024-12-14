@@ -7,19 +7,7 @@ module.exports = {
   plugins: [
     `gatsby-plugin-image`,
     `gatsby-transformer-sharp`,
-    {
-      resolve: `gatsby-plugin-sharp`,
-      options: {
-        defaults: {
-          formats: [`auto`, `webp`, `avif`],  
-          quality: 90,                      
-          placeholder: `blurred`,           
-          backgroundColor: `transparent`,   
-          breakpoints: [750, 1080, 1366, 1920], 
-        },
-        failOnError: true,                  
-      },
-    },
+    `gatsby-plugin-sharp`,
     {
       resolve: `gatsby-source-filesystem`,
       options: {
