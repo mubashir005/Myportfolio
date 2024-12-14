@@ -380,13 +380,17 @@ const Infographics = ({ data }) => {
 
 export const query = graphql`
   query {
-    allFile(filter: { sourceInstanceName: { eq: "infograph_images" } })
- {
+    allFile(filter: { sourceInstanceName: { eq: "infograph_images" } }) {
       edges {
         node {
           id
           childImageSharp {
-            gatsbyImageData(width: 1200, placeholder: BLURRED)
+            gatsbyImageData(
+              layout: FULL_WIDTH
+              width: 2000
+              placeholder: BLURRED
+              formats: [AUTO, WEBP, AVIF]
+            )
           }
           relativePath
         }
@@ -394,5 +398,6 @@ export const query = graphql`
     }
   }
 `;
+
 
 export default Infographics;
