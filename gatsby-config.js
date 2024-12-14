@@ -12,7 +12,14 @@ module.exports = {
       resolve: `gatsby-source-filesystem`,
       options: {
         name: `images`,
-        path: `${__dirname}/src/images/`, // Ensure this path is correct
+        path: `${__dirname}/src/images/`,
+      },
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `infograph_images`,
+        path: `${__dirname}/src/infographic_images/`,
       },
     },
   ],

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "gatsby";
 import { graphql } from "gatsby";
 import { GatsbyImage, getImage } from "gatsby-plugin-image";
 import { Helmet } from "react-helmet"; // Import Helmet
@@ -261,7 +262,9 @@ const PortfolioPage = ({ data }) => {
         <div className="portfolio-header">
           <div className="portfolio-categories">
             <button className="tab active">Isometric Illustrations</button>
-            <button className="tab">Infographics</button>
+            <Link to="/infographic" className="tab">
+              Infographics
+            </Link>
             <button className="tab">Social Media</button>
             <button className="tab">Logos</button>
             <button className="tab">AI Generated</button>
