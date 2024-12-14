@@ -19,7 +19,7 @@ import myImage from "../profileimage/my_image.jpg";
 import Header from "../components/Header";
 import FeedbackSidebar from "../components/FeedbackSidebar";
 import Footer from "../components/Footer";
-import LikeButton from "../../LikeButton";
+import LikeButton from "../../LikeButtoninfo";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faCommentDots } from "@fortawesome/free-solid-svg-icons"; // Import FontAwesome icons
 import SlidingPanel from 'react-sliding-side-panel'; // Import the sliding panel
