@@ -38,7 +38,7 @@ const Infographics = ({ data }) => {
   const [comments, setComments] = useState([]); // List of comments for the current project
   const [openPanel, setOpenPanel] = useState(false); // Control the sidebar visibility
   const[currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 20; //number of image per page
+  const itemsPerPage = 100; //number of image per page
 
   
 
@@ -261,7 +261,7 @@ const Infographics = ({ data }) => {
         {/* Portfolio categories and sorting controls */}
         <div className="portfolio-header">
           <div className="portfolio-categories">
-            <Link to="/index" className="tab">
+            <Link to="/" className="tab">
              Isometric Illustrations
             </Link>
             <button className="tab active">Infographics</button>
