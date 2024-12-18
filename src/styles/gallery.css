@@ -258,6 +258,7 @@ body {
 .gallery-item {
   position: relative;
   width: 100%; /* Takes full width of the column */
+  max-height: 800px;
   aspect-ratio: 1/1; /* Ensures a square shape */
   border-radius: 8px; /* Optional for rounded corners */
   overflow: hidden; /* Ensures content doesn't overflow */
@@ -940,4 +941,55 @@ body {
 .pagination-button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
+}
+
+
+
+
+
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Gallery Container */
+.containerinfo {
+  width: 1400px;
+  margin: 20px auto; /* Centered on the page */
+  columns: 4; /* 4 columns for desktop */
+  column-gap: 20px; /* Space between columns */
+}
+
+.containerinfo .boxinfo {
+  width: 100%;
+  margin-bottom: 10px; /* Spacing between rows */
+  break-inside: avoid; /* Avoid breaking content within columns */
+}
+
+.containerinfo .boxinfo img {
+  max-width: 100%;
+  border-radius: 15px;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .containerinfo {
+    width: calc(100% - 40px); /* Adapt to smaller screen width */
+    columns: 3; /* 3 columns for medium screens */
+  }
+}
+
+@media (max-width: 768px) {
+  .containerinfo {
+    columns: 2; /* 2 columns for tablets */
+  }
+}
+
+@media (max-width: 480px) {
+  .containerinfo {
+    columns: 1; /* Single column for mobile devices */
+  }
 }
