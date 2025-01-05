@@ -408,8 +408,8 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 90vw; /* Take up most of the viewport width */
-  height: 90vh; /* Take up most of the viewport height */
+  width: 1200px; /* Take up most of the viewport width */
+  height: 900px; /* Take up most of the viewport height */
   background-color: rgba(255, 255, 255, 0.95); /* Slightly opaque white background */
   z-index: 1010; /* Above overlay */
   overflow: auto; /* Enable scrolling if content exceeds */
@@ -430,6 +430,7 @@ body {
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.8); /* Dark semi-transparent background */
   z-index: 1000; /* Ensure it’s beneath the sliding pane */
+  
 }
 
 .modal.zoomed {
@@ -447,12 +448,13 @@ body {
 /* Inner Modal Content */
 .modal-content {
   display: flex;
-  justify-content: space-between;
+  justify-content: c;
   gap: 20px;
   width: 100%;
   max-width: 1200px; /* Limit width of modal content */
   padding: 20px;
   padding-top: 20px;
+
   
 }
 
@@ -467,7 +469,7 @@ body {
   align-items: flex-start; /* Align image to the top */
   cursor: zoom-in;
   border-radius: 8px;
-  
+  align-self: center;
 }
 
 .modal.zoomed .modal-image-container {
@@ -501,6 +503,7 @@ body {
   -o-user-drag: none;
   user-drag: none;
   overflow-y: auto; /* Enable scroll within the sidebar if content exceeds */
+  margin: auto;
 }
 
 .modal-image-container.zoomed img {
