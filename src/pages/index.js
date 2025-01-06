@@ -392,8 +392,7 @@ const PortfolioPage = ({ data }) => {
 
       </div>
       <Footer />
-
-      {/* Modal */}
+      
       {/* Modal */}
       <Modal
         isOpen={modalIsOpen}
