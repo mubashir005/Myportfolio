@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useRef,useState, useEffect } from "react";
 import { Link } from "gatsby";
 import { graphql } from "gatsby";
 import { GatsbyImage, getImage } from "gatsby-plugin-image";
 import { Helmet } from "react-helmet"; 
+import { render } from "react-dom";
 import Modal from "react-modal";
 import {
   collection,
@@ -39,7 +40,12 @@ const Infographics = ({ data }) => {
   const [openPanel, setOpenPanel] = useState(false); // Control the sidebar visibility
   const[currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 100; //number of image per page
+  const closeButton = document.querySelector('.close-button');
+  const imageRef = useRef(null); // Ref for the image
+  const [touchStart, setTouchStart] = useState(null); // Track touch start position
+  const [touchEnd, setTouchEnd] = useState(null); // Track touch end position
 
+  
   
 
   const uploadImagesToFirebase = async () => {
@@ -60,6 +66,8 @@ const Infographics = ({ data }) => {
     await Promise.all(imageUploadPromises);
   };
 
+
+  
   useEffect(() => {
     const fetchImagesWithMetadata = async () => {
       await uploadImagesToFirebase();
@@ -121,8 +129,66 @@ const Infographics = ({ data }) => {
 
   // Toggle zoom on image
   const toggleZoom = () => {
-    setIsZoomed(!isZoomed); // Zoom only the image
+    const imageElement = imageRef.current?.querySelector("img"); // Target the img tag
+  
+    if (imageElement) {
+      if (!isZoomed) {
+        // Enter fullscreen
+        if (imageElement.requestFullscreen) {
+          imageElement.requestFullscreen();
+        } else if (imageElement.webkitRequestFullscreen) {
+          imageElement.webkitRequestFullscreen(); // Safari
+        } else if (imageElement.msRequestFullscreen) {
+          imageElement.msRequestFullscreen(); // IE/Edge
+        }
+      } else {
+        // Exit fullscreen
+        if (document.fullscreenElement) {
+          // Check if fullscreen mode is active
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen(); // Safari
+          } else if (document.msExitFullscreen) {
+            document.msExitFullscreen(); // IE/Edge
+          }
+        } else {
+          console.warn("No element is currently in fullscreen mode.");
+        }
+      }
+      setIsZoomed(!isZoomed); // Toggle zoom state
+    } else {
+      console.error("Image element not found!");
+    }
   };
+  //-------------------------------------------------------------------------
+  //Handle the touch start and end events:
+  
+  const handleTouchStart = (e) => {
+    setTouchStart(e.targetTouches[0].clientX); // Record the starting X position
+  };
+  
+  const handleTouchEnd = (e) => {
+    setTouchEnd(e.changedTouches[0].clientX); // Record the ending X position
+  
+    if (touchStart && touchEnd) {
+      const swipeDistance = touchStart - touchEnd; // Calculate swipe distance
+  
+      if (swipeDistance > 50) {
+        // Swipe left: Go to the next image
+        setCurrentIndex((prevIndex) =>
+          prevIndex === sortedImages.length - 1 ? 0 : prevIndex + 1
+        );
+      } else if (swipeDistance < -50) {
+        // Swipe right: Go to the previous image
+        setCurrentIndex((prevIndex) =>
+          prevIndex === 0 ? sortedImages.length - 1 : prevIndex - 1
+        );
+      }
+    }
+  };
+  
+  //-------------------------------------------------------------------------
 
   // Updated handleAddFeedback to accept name, feedback, and rating
   const handleAddFeedback = async (name, feedback, rating, imageIndex) => {
@@ -199,6 +265,22 @@ const Infographics = ({ data }) => {
       setCurrentPage(currentPage-1);
     }
   };
+
+  //ecp key close full screen
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape" && document.fullscreenElement) {
+        document.exitFullscreen();
+        setIsZoomed(false);
+      }
+    };
+  
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+  
 
   // Keyboard navigation for modal
   useEffect(() => {
@@ -341,36 +423,49 @@ const Infographics = ({ data }) => {
         className={`modal ${isZoomed ? "zoomed" : ""}`}
         overlayClassName="overlay"
       >
-        <button onClick={closeModal} className="close-button">
-          <FontAwesomeIcon icon={faTimes} />
-        </button>
-        <div className="modal-content">
+        
+        <div className="modal-content"
+        onTouchStart={(e) => handleTouchStart(e)} // Start of the swipe
+        onTouchEnd={(e) => handleTouchEnd(e)} // End of the swipe
+        >
           {sortedImages[currentIndex] && (
             <>
-              <div className="modal-image-container" onClick={toggleZoom}>
-                <GatsbyImage
-                  image={sortedImages[currentIndex].image}
+              <div className="modal-image-container" ref={imageRef}>
+              {sortedImages[currentIndex] && (
+                <img
+                  src={sortedImages[currentIndex].image.images.fallback.src} // Get the source URL
                   alt="Enlarged Isometric Illustration"
+                  onClick={toggleZoom} // Click to toggle fullscreen
+                  style={{ cursor: "zoom-in", width: "100%", height: "auto" }} // Add styles
                 />
+              )}
                 <div className="modal-like-button">
                   <LikeButton projectId={sortedImages[currentIndex].id} />
                 </div>
               </div>
 
-              {/* Add a wrapper div with an ID for FeedbackSidebar */}
-              <div id="feedback-container">
+              
+            </>
+          )}
+        </div>
+        
+  
+</Modal>
+{modalIsOpen && (
+          <button onClick={closeModal} className="close-button">
+            <FontAwesomeIcon icon={faTimes} />
+          </button>
+        )}
+{/* Add a wrapper div with an ID for FeedbackSidebar */}
+{modalIsOpen && (
+<div id="feedback-container">
               <FeedbackSidebar
                 images={images}
                 currentIndex={currentIndex}
                 handleAddFeedback={(name, feedback, rating) => handleAddFeedback(name, feedback, rating, currentIndex)}
               />
               </div>
-            </>
-          )}
-        </div>
-  
-</Modal>
-      
+      )}
       
       
     </>

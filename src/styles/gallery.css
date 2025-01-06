@@ -7,6 +7,7 @@ body {
   max-width: 1500px; /* Limit the width */
   margin: 0 auto; /* Center the entire body */
   padding: 20px;
+  position: relative;
 }
 
 /* Header */
@@ -266,6 +267,7 @@ body {
   border: 1px solid #e0e0e0; /* Subtle border around the image */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  cursor:pointer;
 }
 
 .gallery-item:hover {
@@ -399,26 +401,131 @@ body {
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.8); /* Dark semi-transparent background */
   z-index: 1000; /* Ensure it's beneath the modal but above the main content */
+  overflow:scroll;
 }
 
 /* Modal Styling */
 /* Modal Styling */
 .modal {
-  position: fixed;
+  position: relative;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 1200px; /* Take up most of the viewport width */
-  height: 900px; /* Take up most of the viewport height */
-  background-color: rgba(255, 255, 255, 0.95); /* Slightly opaque white background */
+  width: 1200px;
+  max-width: 1200px; /* Limit the modal width */
+  max-height: 90vh; /* Limit the modal height to the viewport */
+  min-height: 90vh;
+  background-color:transparent; /* Slightly opaque white background */
   z-index: 1010; /* Above overlay */
-  overflow: auto; /* Enable scrolling if content exceeds */
+  /* Enable scrolling for the modal itself */
   border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column; /* Allow content stacking inside */
+  justify-content: flex-start; /* Align content to the top */
+  align-items: center; /* Center content horizontally */
+  padding: 10px;
+}
+
+/* Inner Modal Content */
+.modal-content {
+  display: flex;
+  flex-direction: column; /* Stack content vertically */
+  align-items: center; /* Center content inside */
+  gap: 20px;
+  width: 1100px;
+  max-width: 1200px; /* Limit width of modal content */
+  padding: 30px;
+  background-color: #ffffff;
+  justify-content: center;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); /* Futuristic gradient */
+  color: #ffffff; /* Ensure text is readable on dark background */
+  border: 1px solid rgba(0, 255, 255, 0.3); /* Subtle glowing border */
+  border-radius: 15px; /* Smooth edges */
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.2), 0 0 40px rgba(0, 255, 255, 0.1); /* Glow effect */
+}
+
+
+
+/* Glitch effect lines */
+.modal-content::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 255, 0.05) 3px,
+    rgba(0, 255, 255, 0.1) 4px
+  );
+  opacity: 0.3;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Add text and child elements on top */
+.modal-content > * {
+  position: relative;
+  z-index: 1; /* Ensure content stays above the decorative layers */
+}
+
+/* Keyframes for glowing rotation */
+@keyframes rotateGlow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+/* Image Container */
+.modal-image-container {
+  position: relative;
+  width: 1100px; /* Take full width of modal */
+  max-width: 100%; /* Ensure it doesn’t exceed the modal width */
+  max-height: 100%; /* Ensure it doesn’t exceed the modal height */
+  overflow: hidden; /* Hide any overflowing content */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Align image to the top */
+  cursor: zoom-in;
+  background-color: rgb(255, 255, 255);
+  color: #000;
+  margin:0px;
+  margin-left: -5px;
+  margin-right: -5px;
+  cursor:zoom-in;
+  border-radius: 15px;
+
+}
+
+/* Fullscreen styles */
+.modal-image-container:fullscreen {
+  width: 100vw;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 10px;
+  background-color: #000; /* Black background for better visibility */
+  cursor:zoom-in;
+}
+
+.modal-image-container img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain; /* Maintain aspect ratio */
+  cursor:zoom-in;
+  border-radius: 15px;
+}
+img:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  object-fit: contain;
+  background-color: #000; /* Optional for better visibility */
+  cursor:zoom-in;
 }
 
 /* Modal Overlay */
@@ -433,108 +540,50 @@ body {
   
 }
 
-.modal.zoomed {
-  width: 100vw;
-  height: 100vh;
-  max-width: none;
-  max-height: none;
-  top: 0;
-  left: 0;
-  transform: none;
-  border-radius: 0;
-  padding: 0; /* Remove padding on full screen */
-}
-
-/* Inner Modal Content */
-.modal-content {
-  display: flex;
-  justify-content: c;
-  gap: 20px;
-  width: 100%;
-  max-width: 1200px; /* Limit width of modal content */
-  padding: 20px;
-  padding-top: 20px;
-
-  
-}
-
-.modal-image-container {
-  position: relative;
-  max-width: 100%; /* Ensure it doesn’t exceed the modal width */
-  height: auto; /* Allow height to adjust based on content */
-  max-height: 80vh; /* Restrict height to viewport height */
-  overflow-y: auto; /* Enable vertical scrolling for tall images */
+.close-button {
+  position: fixed; /* Fixed position to stay at the top-right corner */
+  top: 10px;
+  right: 10px;
+  width: 40px; /* Ensure consistent size */
+  height: 40px;
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* Align image to the top */
-  cursor: zoom-in;
-  border-radius: 8px;
-  align-self: center;
-}
-
-.modal.zoomed .modal-image-container {
-  position: relative;
-  cursor: zoom-out;
-  width: 100%;
-  max-width: none; /* Remove the width limit when zoomed */
-  max-height: 70vh; /* Constrain height to viewport height */
-  padding: 0;
-  transform: scale(1.3); /* Scale the image */
-  transition: transform 0.3s ease;
-  height: auto; /* Allow the height to adjust automatically */
-  display: flex; /* Center the image */
-  justify-content: center; /* Horizontally center */
-  align-items: flex-start; /* Vertically center */
-  overflow: auto; /* Enable scrolling for any content that overflows */
-  position: relative;
-}
-
-
-/* Ensure the image fits properly */
-.modal-image-container img {
-  width: auto; /* Maintain aspect ratio */
-  max-width: 100%; /* Restrict width to fit the modal */
-  height: auto; /* Allow image height to adjust automatically */
-  max-height: 100%; /* Ensure image doesn't exceed the container */
-  object-fit: contain; /* Maintain aspect ratio */
-  transition: transform 0.3s ease; /* Smooth transition for zoom */
-  -webkit-user-drag: none;
-  -moz-user-drag: none;
-  -o-user-drag: none;
-  user-drag: none;
-  overflow-y: auto; /* Enable scroll within the sidebar if content exceeds */
-  margin: auto;
-}
-
-.modal-image-container.zoomed img {
-  width: auto; /* Maintain aspect ratio */
-  max-width: 100%; /* Restrict width to container */
-  height: auto; /* Allow height to scale naturally */
-  max-height: 100%; /* Ensure it doesn't exceed container height */
-  object-fit: contain; /* Ensure the image maintains aspect ratio */
-  transform: scale(1.3); /* Apply the same scale factor */
-  transition: transform 0.3s ease; /* Smooth transition */
-}
-
-
-/* Close Button */
-.close-button {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  font-size: 24px;
-  color: #333;
-  background: transparent;
-  border: none;
+  align-items: center;
+  font-size: 20px; /* Adjust font size for readability */
   cursor: pointer;
-  z-index: 1010;
-  transition: color 0.2s ease;
+  z-index: 1010; /* Ensure it stays above other elements */
+  
+  /* Futuristic gradient background */
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); 
+  
+  /* White text for readability */
+  color: #ffffff; 
+  
+  /* Subtle glowing border */
+  border: 1px solid rgba(0, 255, 255, 0.3); 
+  
+  /* Smooth edges */
+  border-radius: 50%; 
+  
+  /* Glow effect */
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.2), 0 0 20px rgba(0, 255, 255, 0.1); 
+  
+  /* Add padding for better click area */
+  padding: 0;
+  
+  /* Smooth hover effect */
+  transition: all 0.3s ease;
 }
 
 .close-button:hover {
-  color: #555;
+  /* Enhance glow and color on hover */
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5), 0 0 30px rgba(0, 255, 255, 0.3);
+  color: #00ffff; /* Brighten text color */
 }
 
+.modal .close-button {
+  display: flex; /* Show the button when the modal is open */
+}
 /* Zoom Icon */
 .zoom-icon {
   position: absolute;
@@ -691,24 +740,34 @@ body {
 }
 
 /* Button to Open Sidebar */
-/* Fixed Feedback Button */
 .open-feedback-btn {
-  position: fixed; /* Change from absolute to fixed */
-  bottom: 20px; /* Distance from the bottom of the viewport */
-  right: 20px; /* Distance from the right of the viewport */
-  padding: 10px 20px;
+  position: fixed; /* Keep the button fixed on the screen */
+  bottom: 40px; /* Adjust the distance from the bottom of the viewport */
+  right: 10px; /* Adjust the distance from the right of the viewport */
+  padding: 10px; /* Add padding for better appearance */
   background-color: #333;
   color: #fff;
   border-radius: 30px;
+  border: 1px solid #007acc; /* Optional border for better visibility */
   font-size: 14px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  z-index: 1070; /* Ensure it appears above other elements */
+  z-index: 1070; /* Ensure it appears above modal content */
+  writing-mode: vertical-rl; /* Set the text orientation to vertical */
+  text-align: center; /* Center align the text */
+  transform: rotate(180deg); /* Flip the text for correct top-to-bottom orientation */
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); /* Futuristic gradient */
+  color: #ffffff; /* Ensure text is readable on dark background */
+  border: 1px solid rgba(0, 255, 255, 0.3); /* Subtle glowing border */
+  border-radius: 15px; /* Smooth edges */
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.2), 0 0 40px rgba(0, 255, 255, 0.1); /* Glow effect */
 }
 
 .open-feedback-btn:hover {
-  background-color: #444;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5), 0 0 30px rgba(0, 255, 255, 0.3);
+  color: #00ffff; /* Brighten text color */
 }
+
 
 /* Star Rating Styles */
 .star-rating {
@@ -791,25 +850,27 @@ body {
 /* Responsive Sidebar Adjustments */
 @media (max-width: 768px) {
   .sidebar {
-    width: 80%; /* Sidebar takes up more width on smaller screens */
-    right: -80%; /* Fully off-screen initially */
+    width: 100%; /* Sidebar takes up full width on smaller screens */
+    right: -100%; /* Fully off-screen initially */
   }
 
   .sidebar.open {
-    right: 0; /* Slide in on smaller screens */
+    right: 0; /* Slide in to take full width */
   }
 }
 
 @media (max-width: 480px) {
   .sidebar {
-    width: 100%; /* Sidebar takes full width on very small screens */
+    width: 100%; /* Ensure it takes full screen width on very small screens */
     right: -100%; /* Fully off-screen initially */
+    max-width: 100%; /* Prevent overflow */
   }
 
   .sidebar.open {
-    right: 0; /* Slide in on small screens */
+    right: 0; /* Slide in to take full screen */
   }
 }
+
 
 
 /* Portfolio Header */
