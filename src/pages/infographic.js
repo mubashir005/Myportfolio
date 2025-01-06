@@ -42,9 +42,6 @@ const Infographics = ({ data }) => {
   const itemsPerPage = 100; //number of image per page
   const closeButton = document.querySelector('.close-button');
   const imageRef = useRef(null); // Ref for the image
-  const [touchStart, setTouchStart] = useState(null); // Track touch start position
-  const [touchEnd, setTouchEnd] = useState(null); // Track touch end position
-
   
   
 
@@ -128,67 +125,40 @@ const Infographics = ({ data }) => {
   };
 
   // Toggle zoom on image
-  const toggleZoom = () => {
-    const imageElement = imageRef.current?.querySelector("img"); // Target the img tag
-  
-    if (imageElement) {
-      if (!isZoomed) {
-        // Enter fullscreen
-        if (imageElement.requestFullscreen) {
-          imageElement.requestFullscreen();
-        } else if (imageElement.webkitRequestFullscreen) {
-          imageElement.webkitRequestFullscreen(); // Safari
-        } else if (imageElement.msRequestFullscreen) {
-          imageElement.msRequestFullscreen(); // IE/Edge
+const toggleZoom = () => {
+  const imageElement = imageRef.current?.querySelector("img"); // Target the img tag
+
+  if (imageElement) {
+    if (!isZoomed) {
+      // Enter fullscreen
+      if (imageElement.requestFullscreen) {
+        imageElement.requestFullscreen();
+      } else if (imageElement.webkitRequestFullscreen) {
+        imageElement.webkitRequestFullscreen(); // Safari
+      } else if (imageElement.msRequestFullscreen) {
+        imageElement.msRequestFullscreen(); // IE/Edge
+      }
+    } else {
+      // Exit fullscreen
+      if (document.fullscreenElement) {
+        // Check if fullscreen mode is active
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen(); // Safari
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen(); // IE/Edge
         }
       } else {
-        // Exit fullscreen
-        if (document.fullscreenElement) {
-          // Check if fullscreen mode is active
-          if (document.exitFullscreen) {
-            document.exitFullscreen();
-          } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen(); // Safari
-          } else if (document.msExitFullscreen) {
-            document.msExitFullscreen(); // IE/Edge
-          }
-        } else {
-          console.warn("No element is currently in fullscreen mode.");
-        }
-      }
-      setIsZoomed(!isZoomed); // Toggle zoom state
-    } else {
-      console.error("Image element not found!");
-    }
-  };
-  //-------------------------------------------------------------------------
-  //Handle the touch start and end events:
-  
-  const handleTouchStart = (e) => {
-    setTouchStart(e.targetTouches[0].clientX); // Record the starting X position
-  };
-  
-  const handleTouchEnd = (e) => {
-    setTouchEnd(e.changedTouches[0].clientX); // Record the ending X position
-  
-    if (touchStart && touchEnd) {
-      const swipeDistance = touchStart - touchEnd; // Calculate swipe distance
-  
-      if (swipeDistance > 50) {
-        // Swipe left: Go to the next image
-        setCurrentIndex((prevIndex) =>
-          prevIndex === sortedImages.length - 1 ? 0 : prevIndex + 1
-        );
-      } else if (swipeDistance < -50) {
-        // Swipe right: Go to the previous image
-        setCurrentIndex((prevIndex) =>
-          prevIndex === 0 ? sortedImages.length - 1 : prevIndex - 1
-        );
+        console.warn("No element is currently in fullscreen mode.");
       }
     }
-  };
-  
-  //-------------------------------------------------------------------------
+    setIsZoomed(!isZoomed); // Toggle zoom state
+  } else {
+    console.error("Image element not found!");
+  }
+};
+
 
   // Updated handleAddFeedback to accept name, feedback, and rating
   const handleAddFeedback = async (name, feedback, rating, imageIndex) => {
@@ -424,10 +394,7 @@ const Infographics = ({ data }) => {
         overlayClassName="overlay"
       >
         
-        <div className="modal-content"
-        onTouchStart={(e) => handleTouchStart(e)} // Start of the swipe
-        onTouchEnd={(e) => handleTouchEnd(e)} // End of the swipe
-        >
+        <div className="modal-content">
           {sortedImages[currentIndex] && (
             <>
               <div className="modal-image-container" ref={imageRef}>
