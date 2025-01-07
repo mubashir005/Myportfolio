@@ -40,6 +40,9 @@ const Infographics = ({ data }) => {
   const [openPanel, setOpenPanel] = useState(false); // Control the sidebar visibility
   const[currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 100; //number of image per page
+  const [touchStart, setTouchStart] = useState(null); // Track touch start position
+  const [touchEnd, setTouchEnd] = useState(null); // Track touch end position
+
   useEffect(() => {
     if (typeof document !== "undefined") {
       const closeButton = document.querySelector('.close-button');
@@ -156,7 +159,33 @@ const Infographics = ({ data }) => {
       }
     }
   };
+  //---------------------------------------------------------------
+
+  //Handle the touch start and end events: 
+  const handleTouchStart = (e) => {
+    setTouchStart(e.targetTouches[0].clientX); // Record the starting X position
+  };
   
+  const handleTouchEnd = (e) => {
+    setTouchEnd(e.changedTouches[0].clientX); // Record the ending X position
+  
+    if (touchStart && touchEnd) {
+      const swipeDistance = touchStart - touchEnd; // Calculate swipe distance
+  
+      if (swipeDistance > 50) {
+        // Swipe left: Go to the next image
+        setCurrentIndex((prevIndex) =>
+          prevIndex === sortedImages.length - 1 ? 0 : prevIndex + 1
+        );
+      } else if (swipeDistance < -50) {
+        // Swipe right: Go to the previous image
+        setCurrentIndex((prevIndex) =>
+          prevIndex === 0 ? sortedImages.length - 1 : prevIndex - 1
+        );
+      }
+    }
+  };
+//-----------------------------------------------------------------------  
 
 
   // Updated handleAddFeedback to accept name, feedback, and rating
@@ -393,7 +422,10 @@ const Infographics = ({ data }) => {
         overlayClassName="overlay"
       >
         
-        <div className="modal-content">
+        <div className="modal-content"
+        onTouchStart={(e) => handleTouchStart(e)} // Start of the swipe
+        onTouchEnd={(e) => handleTouchEnd(e)} // End of the swipe
+        >
           {sortedImages[currentIndex] && (
             <>
               <div className="modal-image-container" ref={imageRef}>
