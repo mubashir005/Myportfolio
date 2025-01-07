@@ -40,6 +40,8 @@ const PortfolioPage = ({ data }) => {
   const[currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 100; //number of image per page
   const imageRef = useRef(null); // Ref for the image
+  const [touchStart, setTouchStart] = useState(null); // Track touch start position
+  const [touchEnd, setTouchEnd] = useState(null); // Track touch end position
   useEffect(() => {
     if (typeof document !== "undefined") {
       const closeButton = document.querySelector('.close-button');
@@ -47,8 +49,8 @@ const PortfolioPage = ({ data }) => {
   }, []);
   
 
-  
-
+//-----------------------------------------------------------------------  
+  // Upload images from firebase
   const uploadImagesToFirebase = async () => {
     const imageUploadPromises = data.allFile.edges.map(async ({ node }) => {
       const imageName = node.relativePath;
@@ -66,7 +68,9 @@ const PortfolioPage = ({ data }) => {
 
     await Promise.all(imageUploadPromises);
   };
-
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+  // Fetch images from firebase
   useEffect(() => {
     const fetchImagesWithMetadata = async () => {
       await uploadImagesToFirebase();
@@ -99,7 +103,7 @@ const PortfolioPage = ({ data }) => {
 
     fetchImagesWithMetadata();
   }, [data.allFile.edges]);
-
+//-----------------------------------------------------------------------
   const sortedImages = images.slice().sort((a, b) => {
     if (sortCriteria === "Recent") {
       return b.dateAdded - a.dateAdded;
@@ -125,7 +129,7 @@ const PortfolioPage = ({ data }) => {
     setName("");
     setFeedback("");
   };
-
+//-----------------------------------------------------------------------
   // Toggle zoom on image
   const toggleZoom = () => {
     if (typeof document !== "undefined") {
@@ -153,8 +157,35 @@ const PortfolioPage = ({ data }) => {
       }
     }
   };
+//---------------------------------------------------------------
+//---------------------------------------------------------------
+  //Handle the touch start and end events: 
+  const handleTouchStart = (e) => {
+    setTouchStart(e.targetTouches[0].clientX); // Record the starting X position
+  };
   
-
+  const handleTouchEnd = (e) => {
+    setTouchEnd(e.changedTouches[0].clientX); // Record the ending X position
+  
+    if (touchStart && touchEnd) {
+      const swipeDistance = touchStart - touchEnd; // Calculate swipe distance
+  
+      if (swipeDistance > 50) {
+        // Swipe left: Go to the next image
+        setCurrentIndex((prevIndex) =>
+          prevIndex === sortedImages.length - 1 ? 0 : prevIndex + 1
+        );
+      } else if (swipeDistance < -50) {
+        // Swipe right: Go to the previous image
+        setCurrentIndex((prevIndex) =>
+          prevIndex === 0 ? sortedImages.length - 1 : prevIndex - 1
+        );
+      }
+    }
+  };
+//---------------------------------------------------------------  
+  
+//---------------------------------------------------------------
   // Updated handleAddFeedback to accept name, feedback, and rating
   const handleAddFeedback = async (name, feedback, rating, imageIndex) => {
     if (!feedback.trim() || !name.trim() || rating === 0) return;
@@ -168,24 +199,26 @@ const PortfolioPage = ({ data }) => {
       rating,
       timestamp: new Date(),
     };
-  
+ 
+
     // Step 1: Fetch the current comments for this specific project from Firestore
     const projectSnapshot = await getDoc(projectRef);
     const existingComments = projectSnapshot.exists()
       ? projectSnapshot.data().comments || [] // Existing comments if any
       : [];
+
   
     // Step 2: Update Firestore by appending the new comment to the existing comments
     await updateDoc(projectRef, {
       comments: [...existingComments, newComment],
     });
-  
+
     // Step 3: Re-fetch the updated comments from Firestore
     const updatedSnapshot = await getDoc(projectRef);
     const updatedComments = updatedSnapshot.exists()
       ? updatedSnapshot.data().comments
       : [];
-  
+
     // Step 4: Update the local `images` array with the new comments
     setImages((prevImages) => {
       const updatedImages = prevImages.map((image, index) => {
@@ -200,6 +233,7 @@ const PortfolioPage = ({ data }) => {
       return updatedImages;
     });
   };
+//-----------------------------------------------------------------------
   
   const paginatedImages = sortedImages.slice(
     (currentPage-1)*itemsPerPage,//Start index
@@ -230,7 +264,7 @@ const PortfolioPage = ({ data }) => {
       setCurrentPage(currentPage-1);
     }
   };
-
+//---------------------------------------------------------------
   // Keyboard navigation for modal
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -254,6 +288,7 @@ const PortfolioPage = ({ data }) => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [modalIsOpen, sortedImages.length]);
+//-----------------------------------------------------------------------
 
   return (
     <>
@@ -372,7 +407,10 @@ const PortfolioPage = ({ data }) => {
         overlayClassName="overlay"
       >
         
-        <div className="modal-content">
+        <div className="modal-content"
+        onTouchStart={(e) => handleTouchStart(e)} // Start of the swipe
+        onTouchEnd={(e) => handleTouchEnd(e)} // End of the swipe
+        >
           {sortedImages[currentIndex] && (
             <>
               <div className="modal-image-container" ref={imageRef}>
