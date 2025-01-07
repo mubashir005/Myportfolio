@@ -23,7 +23,7 @@ import Footer from "../components/Footer";
 import LikeButton from "../../LikeButtoninfo";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faCommentDots } from "@fortawesome/free-solid-svg-icons"; // Import FontAwesome icons
-import SlidingPanel from 'react-sliding-side-panel'; // Import the sliding panel
+
 
 // Set root element for modal accessibility
 Modal.setAppElement("#___gatsby");
@@ -40,7 +40,12 @@ const Infographics = ({ data }) => {
   const [openPanel, setOpenPanel] = useState(false); // Control the sidebar visibility
   const[currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 100; //number of image per page
-  const closeButton = document.querySelector('.close-button');
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      const closeButton = document.querySelector('.close-button');
+    }
+  }, []);
+  
   const imageRef = useRef(null); // Ref for the image
   
   
@@ -125,39 +130,33 @@ const Infographics = ({ data }) => {
   };
 
   // Toggle zoom on image
-const toggleZoom = () => {
-  const imageElement = imageRef.current?.querySelector("img"); // Target the img tag
-
-  if (imageElement) {
-    if (!isZoomed) {
-      // Enter fullscreen
-      if (imageElement.requestFullscreen) {
-        imageElement.requestFullscreen();
-      } else if (imageElement.webkitRequestFullscreen) {
-        imageElement.webkitRequestFullscreen(); // Safari
-      } else if (imageElement.msRequestFullscreen) {
-        imageElement.msRequestFullscreen(); // IE/Edge
-      }
-    } else {
-      // Exit fullscreen
-      if (document.fullscreenElement) {
-        // Check if fullscreen mode is active
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) {
-          document.webkitExitFullscreen(); // Safari
-        } else if (document.msExitFullscreen) {
-          document.msExitFullscreen(); // IE/Edge
+  const toggleZoom = () => {
+    if (typeof document !== "undefined") {
+      const imageElement = imageRef.current?.querySelector("img");
+  
+      if (imageElement) {
+        if (!isZoomed) {
+          if (imageElement.requestFullscreen) {
+            imageElement.requestFullscreen();
+          } else if (imageElement.webkitRequestFullscreen) {
+            imageElement.webkitRequestFullscreen();
+          } else if (imageElement.msRequestFullscreen) {
+            imageElement.msRequestFullscreen();
+          }
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+          }
         }
-      } else {
-        console.warn("No element is currently in fullscreen mode.");
+        setIsZoomed(!isZoomed);
       }
     }
-    setIsZoomed(!isZoomed); // Toggle zoom state
-  } else {
-    console.error("Image element not found!");
-  }
-};
+  };
+  
 
 
   // Updated handleAddFeedback to accept name, feedback, and rating
@@ -400,7 +399,8 @@ const toggleZoom = () => {
               <div className="modal-image-container" ref={imageRef}>
               {sortedImages[currentIndex] && (
                 <img
-                  src={sortedImages[currentIndex].image.images.fallback.src} // Get the source URL
+                  src={sortedImages[currentIndex]?.image?.images?.fallback?.src
+                  } // Get the source URL
                   alt="Enlarged Isometric Illustration"
                   onClick={toggleZoom} // Click to toggle fullscreen
                   style={{ cursor: "zoom-in", width: "100%", height: "auto" }} // Add styles

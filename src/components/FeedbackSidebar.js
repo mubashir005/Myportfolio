@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCommentDots, faStar } from '@fortawesome/free-solid-svg-icons';
 import SlidingPane from 'react-sliding-pane';
 import 'react-sliding-pane/dist/react-sliding-pane.css';
-
+import "../styles/gallery.css";
 
 const FeedbackSidebar = ({ images, currentIndex, handleAddFeedback }) => {
   const [isPaneOpen, setIsPaneOpen] = useState(false);

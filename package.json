@@ -10,9 +10,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^6.6.0",
-    "@fortawesome/free-solid-svg-icons": "^6.6.0",
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "@loadable/component": "^5.16.4",
     "@syncfusion/ej2-react-buttons": "^27.1.58",
     "@syncfusion/ej2-react-navigations": "^27.1.58",
     "firebase": "^11.0.1",

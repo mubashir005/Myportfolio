@@ -40,6 +40,12 @@ const PortfolioPage = ({ data }) => {
   const[currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 100; //number of image per page
   const imageRef = useRef(null); // Ref for the image
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      const closeButton = document.querySelector('.close-button');
+    }
+  }, []);
+  
 
   
 
@@ -122,38 +128,32 @@ const PortfolioPage = ({ data }) => {
 
   // Toggle zoom on image
   const toggleZoom = () => {
-    const imageElement = imageRef.current?.querySelector("img"); // Target the img tag
+    if (typeof document !== "undefined") {
+      const imageElement = imageRef.current?.querySelector("img");
   
-    if (imageElement) {
-      if (!isZoomed) {
-        // Enter fullscreen
-        if (imageElement.requestFullscreen) {
-          imageElement.requestFullscreen();
-        } else if (imageElement.webkitRequestFullscreen) {
-          imageElement.webkitRequestFullscreen(); // Safari
-        } else if (imageElement.msRequestFullscreen) {
-          imageElement.msRequestFullscreen(); // IE/Edge
-        }
-      } else {
-        // Exit fullscreen
-        if (document.fullscreenElement) {
-          // Check if fullscreen mode is active
+      if (imageElement) {
+        if (!isZoomed) {
+          if (imageElement.requestFullscreen) {
+            imageElement.requestFullscreen();
+          } else if (imageElement.webkitRequestFullscreen) {
+            imageElement.webkitRequestFullscreen();
+          } else if (imageElement.msRequestFullscreen) {
+            imageElement.msRequestFullscreen();
+          }
+        } else {
           if (document.exitFullscreen) {
             document.exitFullscreen();
           } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen(); // Safari
+            document.webkitExitFullscreen();
           } else if (document.msExitFullscreen) {
-            document.msExitFullscreen(); // IE/Edge
+            document.msExitFullscreen();
           }
-        } else {
-          console.warn("No element is currently in fullscreen mode.");
         }
+        setIsZoomed(!isZoomed);
       }
-      setIsZoomed(!isZoomed); // Toggle zoom state
-    } else {
-      console.error("Image element not found!");
     }
   };
+  
 
   // Updated handleAddFeedback to accept name, feedback, and rating
   const handleAddFeedback = async (name, feedback, rating, imageIndex) => {
@@ -378,7 +378,8 @@ const PortfolioPage = ({ data }) => {
               <div className="modal-image-container" ref={imageRef}>
               {sortedImages[currentIndex] && (
                 <img
-                  src={sortedImages[currentIndex].image.images.fallback.src} // Get the source URL
+                  src={sortedImages[currentIndex]?.image?.images?.fallback?.src
+                  } // Get the source URL
                   alt="Enlarged Isometric Illustration"
                   onClick={toggleZoom} // Click to toggle fullscreen
                   style={{ cursor: "zoom-in", width: "100%", height: "auto" }} // Add styles
@@ -395,21 +396,21 @@ const PortfolioPage = ({ data }) => {
         </div>
   
 </Modal>
-{modalIsOpen && (
-          <button onClick={closeModal} className="close-button">
-            <FontAwesomeIcon icon={faTimes} />
-          </button>
-        )}
-{/* Add a wrapper div with an ID for FeedbackSidebar */}
-{modalIsOpen && (
-<div id="feedback-container">
-              <FeedbackSidebar
-                images={images}
-                currentIndex={currentIndex}
-                handleAddFeedback={(name, feedback, rating) => handleAddFeedback(name, feedback, rating, currentIndex)}
-              />
-              </div>
-      )}
+        {modalIsOpen && (
+                  <button onClick={closeModal} className="close-button">
+                    <FontAwesomeIcon icon={faTimes} />
+                  </button>
+                )}
+        {/* Add a wrapper div with an ID for FeedbackSidebar */}
+        {modalIsOpen && (
+        <div id="feedback-container">
+                      <FeedbackSidebar
+                        images={images}
+                        currentIndex={currentIndex}
+                        handleAddFeedback={(name, feedback, rating) => handleAddFeedback(name, feedback, rating, currentIndex)}
+                      />
+                      </div>
+              )}
       
       
     </>
