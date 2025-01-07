@@ -397,34 +397,35 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   background-color: rgba(0, 0, 0, 0.8); /* Dark semi-transparent background */
   z-index: 1000; /* Ensure it's beneath the modal but above the main content */
-  overflow:scroll;
+  display: flex; /* Use flexbox for centering */
+  justify-content: center; /* Horizontal centering */
+  align-items: center; /* Vertical centering */
+  overflow:auto /* Prevent scrolling on the overlay */
 }
+
 
 /* Modal Styling */
 /* Modal Styling */
 .modal {
   position: relative;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   width: 1200px;
-  max-width: 1200px; /* Limit the modal width */
-  max-height: 90vh; /* Limit the modal height to the viewport */
-  min-height: 90vh;
-  background-color:transparent; /* Slightly opaque white background */
+  max-width: 90%; /* Adjust for smaller screens */
+  max-height: 90vh; /* Limit the modal height */
+  background-color: transparent; /* Background color for the modal */
   z-index: 1010; /* Above overlay */
-  /* Enable scrolling for the modal itself */
   border-radius: 8px;
   display: flex;
-  flex-direction: column; /* Allow content stacking inside */
-  justify-content: flex-start; /* Align content to the top */
-  align-items: center; /* Center content horizontally */
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
   padding: 10px;
+  /* Enable scrolling inside the modal */
 }
+
 
 /* Inner Modal Content */
 .modal-content {
@@ -434,17 +435,21 @@ body {
   gap: 20px;
   width: 1100px;
   max-width: 1200px; /* Limit width of modal content */
-  padding: 30px;
+  padding: 15px;
   background-color: #ffffff;
   justify-content: center;
   background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); /* Futuristic gradient */
   color: #ffffff; /* Ensure text is readable on dark background */
   border: 1px solid rgba(0, 255, 255, 0.3); /* Subtle glowing border */
-  border-radius: 15px; /* Smooth edges */
+  border-radius: 11px; /* Smooth edges */
   box-shadow: 0 0 20px rgba(0, 255, 255, 0.2), 0 0 40px rgba(0, 255, 255, 0.1); /* Glow effect */
 }
 
-
+.modal-content:hover {
+  /* Enhance glow and color on hover */
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5), 0 0 30px rgba(0, 255, 255, 0.3);
+  color: #00ffff; /* Brighten text color */
+}
 
 /* Glitch effect lines */
 .modal-content::after {
@@ -498,7 +503,7 @@ body {
   margin-left: -5px;
   margin-right: -5px;
   cursor:zoom-in;
-  border-radius: 15px;
+  border-radius: 11px;
 
 }
 
@@ -520,7 +525,7 @@ body {
   max-height: 100%;
   object-fit: contain; /* Maintain aspect ratio */
   cursor:zoom-in;
-  border-radius: 15px;
+  border-radius: 11px;
 }
 img:fullscreen {
   width: 100vw;
@@ -594,8 +599,8 @@ img:fullscreen {
   .modal {
     width: 95%; /* Full width for small screens */
     max-height: 70vh;
-    top: 5%;
-    transform: translate(-50%, 0); /* Adjust centering for height */
+    transform: translate(-50%, -50); /* Adjust centering for height */
+    margin: auto;
   }
 
   .modal-content {
@@ -617,16 +622,20 @@ img:fullscreen {
     width: 100%; /* Full width */
     height: auto; /* Allow height to adjust based on content */
     border-radius: 0; /* Remove border radius for small devices */
+
+    display: flex; /* Add flexbox for centering */
+    flex-direction: column; /* Stack content vertically */
+    justify-content: center; /* Center vertically */
+    align-items: center; /* Center horizontally */
+    padding: 10px; /* Optional: Add padding for breathing room */
   }
-  
 
   .modal-content {
+    width: 90%; /* Adjust to fit more content on small screens */
     padding: 10px;
     gap: 8px;
     font-size: 11px; /* Further reduce font size */
-    width: 80%; /* Full width */
-    margin: auto;
-    
+    margin: 350px; /* Center content horizontally */
   }
 
   .modal-image-container {
@@ -635,10 +644,12 @@ img:fullscreen {
   }
 }
 
+
 @media (max-width: 400px) {
   .modal {
     width: 80%; /* Full width */
     height: auto;
+    
   }
 
   .modal-content {
@@ -657,7 +668,7 @@ img:fullscreen {
 .close-button {
   position: fixed; /* Fixed position to stay at the top-right corner */
   top: 10px;
-  right: 10px;
+  right: 19px;
   width: 40px; /* Ensure consistent size */
   height: 40px;
   display: flex;
@@ -857,7 +868,7 @@ img:fullscreen {
 .open-feedback-btn {
   position: fixed; /* Keep the button fixed on the screen */
   bottom: 40px; /* Adjust the distance from the bottom of the viewport */
-  right: 10px; /* Adjust the distance from the right of the viewport */
+  right: 19px; /* Adjust the distance from the right of the viewport */
   padding: 10px; /* Add padding for better appearance */
   background-color: #333;
   color: #fff;
