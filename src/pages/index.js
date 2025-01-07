@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useRef,useState, useEffect } from "react";
 import { Link } from "gatsby";
 import { graphql } from "gatsby";
 import { GatsbyImage, getImage } from "gatsby-plugin-image";
@@ -39,9 +39,18 @@ const PortfolioPage = ({ data }) => {
   const [openPanel, setOpenPanel] = useState(false); // Control the sidebar visibility
   const[currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 100; //number of image per page
-
+  const imageRef = useRef(null); // Ref for the image
+  const [touchStart, setTouchStart] = useState(null); // Track touch start position
+  const [touchEnd, setTouchEnd] = useState(null); // Track touch end position
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      const closeButton = document.querySelector('.close-button');
+    }
+  }, []);
   
 
+//-----------------------------------------------------------------------  
+  // Upload images from firebase
   const uploadImagesToFirebase = async () => {
     const imageUploadPromises = data.allFile.edges.map(async ({ node }) => {
       const imageName = node.relativePath;
@@ -59,7 +68,9 @@ const PortfolioPage = ({ data }) => {
 
     await Promise.all(imageUploadPromises);
   };
-
+//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
+  // Fetch images from firebase
   useEffect(() => {
     const fetchImagesWithMetadata = async () => {
       await uploadImagesToFirebase();
@@ -92,7 +103,7 @@ const PortfolioPage = ({ data }) => {
 
     fetchImagesWithMetadata();
   }, [data.allFile.edges]);
-
+//-----------------------------------------------------------------------
   const sortedImages = images.slice().sort((a, b) => {
     if (sortCriteria === "Recent") {
       return b.dateAdded - a.dateAdded;
@@ -118,12 +129,63 @@ const PortfolioPage = ({ data }) => {
     setName("");
     setFeedback("");
   };
-
+//-----------------------------------------------------------------------
   // Toggle zoom on image
   const toggleZoom = () => {
-    setIsZoomed(!isZoomed); // Zoom only the image
+    if (typeof document !== "undefined") {
+      const imageElement = imageRef.current?.querySelector("img");
+  
+      if (imageElement) {
+        if (!isZoomed) {
+          if (imageElement.requestFullscreen) {
+            imageElement.requestFullscreen();
+          } else if (imageElement.webkitRequestFullscreen) {
+            imageElement.webkitRequestFullscreen();
+          } else if (imageElement.msRequestFullscreen) {
+            imageElement.msRequestFullscreen();
+          }
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+          }
+        }
+        setIsZoomed(!isZoomed);
+      }
+    }
   };
-
+//---------------------------------------------------------------
+//---------------------------------------------------------------
+  //Handle the touch start and end events: 
+  const handleTouchStart = (e) => {
+    setTouchStart(e.targetTouches[0].clientX); // Record the starting X position
+  };
+  
+  const handleTouchEnd = (e) => {
+    setTouchEnd(e.changedTouches[0].clientX); // Record the ending X position
+  
+    if (touchStart && touchEnd) {
+      const swipeDistance = touchStart - touchEnd; // Calculate swipe distance
+  
+      if (swipeDistance > 50) {
+        // Swipe left: Go to the next image
+        setCurrentIndex((prevIndex) =>
+          prevIndex === sortedImages.length - 1 ? 0 : prevIndex + 1
+        );
+      } else if (swipeDistance < -50) {
+        // Swipe right: Go to the previous image
+        setCurrentIndex((prevIndex) =>
+          prevIndex === 0 ? sortedImages.length - 1 : prevIndex - 1
+        );
+      }
+    }
+  };
+//---------------------------------------------------------------  
+  
+//---------------------------------------------------------------
   // Updated handleAddFeedback to accept name, feedback, and rating
   const handleAddFeedback = async (name, feedback, rating, imageIndex) => {
     if (!feedback.trim() || !name.trim() || rating === 0) return;
@@ -137,24 +199,26 @@ const PortfolioPage = ({ data }) => {
       rating,
       timestamp: new Date(),
     };
-  
+ 
+
     // Step 1: Fetch the current comments for this specific project from Firestore
     const projectSnapshot = await getDoc(projectRef);
     const existingComments = projectSnapshot.exists()
       ? projectSnapshot.data().comments || [] // Existing comments if any
       : [];
+
   
     // Step 2: Update Firestore by appending the new comment to the existing comments
     await updateDoc(projectRef, {
       comments: [...existingComments, newComment],
     });
-  
+
     // Step 3: Re-fetch the updated comments from Firestore
     const updatedSnapshot = await getDoc(projectRef);
     const updatedComments = updatedSnapshot.exists()
       ? updatedSnapshot.data().comments
       : [];
-  
+
     // Step 4: Update the local `images` array with the new comments
     setImages((prevImages) => {
       const updatedImages = prevImages.map((image, index) => {
@@ -169,6 +233,7 @@ const PortfolioPage = ({ data }) => {
       return updatedImages;
     });
   };
+//-----------------------------------------------------------------------
   
   const paginatedImages = sortedImages.slice(
     (currentPage-1)*itemsPerPage,//Start index
@@ -199,7 +264,7 @@ const PortfolioPage = ({ data }) => {
       setCurrentPage(currentPage-1);
     }
   };
-
+//---------------------------------------------------------------
   // Keyboard navigation for modal
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -223,6 +288,7 @@ const PortfolioPage = ({ data }) => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [modalIsOpen, sortedImages.length]);
+//-----------------------------------------------------------------------
 
   return (
     <>
@@ -340,36 +406,49 @@ const PortfolioPage = ({ data }) => {
         className={`modal ${isZoomed ? "zoomed" : ""}`}
         overlayClassName="overlay"
       >
-        <button onClick={closeModal} className="close-button">
-          <FontAwesomeIcon icon={faTimes} />
-        </button>
-        <div className="modal-content">
+        
+        <div className="modal-content"
+        onTouchStart={(e) => handleTouchStart(e)} // Start of the swipe
+        onTouchEnd={(e) => handleTouchEnd(e)} // End of the swipe
+        >
           {sortedImages[currentIndex] && (
             <>
-              <div className="modal-image-container" onClick={toggleZoom}>
-                <GatsbyImage
-                  image={sortedImages[currentIndex].image}
+              <div className="modal-image-container" ref={imageRef}>
+              {sortedImages[currentIndex] && (
+                <img
+                  src={sortedImages[currentIndex]?.image?.images?.fallback?.src
+                  } // Get the source URL
                   alt="Enlarged Isometric Illustration"
+                  onClick={toggleZoom} // Click to toggle fullscreen
+                  style={{ cursor: "zoom-in", width: "100%", height: "auto" }} // Add styles
                 />
+              )}
                 <div className="modal-like-button">
                   <LikeButton projectId={sortedImages[currentIndex].id} />
                 </div>
               </div>
 
-              {/* Add a wrapper div with an ID for FeedbackSidebar */}
-              <div id="feedback-container">
-              <FeedbackSidebar
-                images={images}
-                currentIndex={currentIndex}
-                handleAddFeedback={(name, feedback, rating) => handleAddFeedback(name, feedback, rating, currentIndex)}
-              />
-              </div>
+              
             </>
           )}
         </div>
   
 </Modal>
-      
+        {modalIsOpen && (
+                  <button onClick={closeModal} className="close-button">
+                    <FontAwesomeIcon icon={faTimes} />
+                  </button>
+                )}
+        {/* Add a wrapper div with an ID for FeedbackSidebar */}
+        {modalIsOpen && (
+        <div id="feedback-container">
+                      <FeedbackSidebar
+                        images={images}
+                        currentIndex={currentIndex}
+                        handleAddFeedback={(name, feedback, rating) => handleAddFeedback(name, feedback, rating, currentIndex)}
+                      />
+                      </div>
+              )}
       
       
     </>
