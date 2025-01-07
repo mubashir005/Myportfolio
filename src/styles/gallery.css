@@ -479,6 +479,8 @@ body {
     transform: rotate(360deg);
   }
 }
+
+
 /* Image Container */
 .modal-image-container {
   position: relative;
@@ -539,6 +541,118 @@ img:fullscreen {
   z-index: 1000; /* Ensure it’s beneath the sliding pane */
   
 }
+
+/* Responsive Media Queries */
+
+/* Responsive Media Queries */
+@media (max-width: 1200px) {
+  .modal {
+    max-width: 1100px; /* Adjust modal width */
+    max-height: 80vh; /* Adjust modal height */
+  }
+
+  .modal-content {
+    padding: 20px; /* Reduce padding */
+    width: 80%; /* Full width */
+    margin: auto;
+  }
+}
+
+@media (max-width: 1100px) {
+  .modal {
+    max-width: 1000px; /* Adjust modal width */
+    max-height: 80vh; /* Adjust modal height */
+  }
+
+  .modal-content {
+    padding: 20px; /* Reduce padding */
+    width: 80%; /* Full width */
+    margin: auto;
+  }
+}
+
+@media (max-width: 992px) {
+  .modal {
+    max-width: 800px; /* Reduce modal width further */
+    max-height: 75vh; /* Reduce modal height */
+  }
+
+  .modal-content {
+    gap: 10px; /* Reduce gap */
+    font-size: 14px; /* Adjust font size */
+    width: 80%; /* Full width */
+    margin: auto;
+  }
+
+  .modal-image-container {
+    width: 100%; /* Adjust image container width */
+    margin: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .modal {
+    width: 95%; /* Full width for small screens */
+    max-height: 70vh;
+    top: 5%;
+    transform: translate(-50%, 0); /* Adjust centering for height */
+  }
+
+  .modal-content {
+    padding: 15px; /* Reduce padding */
+    gap: 10px; /* Reduce spacing */
+    font-size: 12px; /* Smaller font size */
+    width: 80%; /* Full width */
+    margin: auto;
+  }
+
+  .modal-image-container {
+    width: 100%; /* Full width for image container */
+    margin: 0; /* Remove margins */
+  }
+}
+
+@media (max-width: 576px) {
+  .modal {
+    width: 100%; /* Full width */
+    height: auto; /* Allow height to adjust based on content */
+    border-radius: 0; /* Remove border radius for small devices */
+  }
+  
+
+  .modal-content {
+    padding: 10px;
+    gap: 8px;
+    font-size: 11px; /* Further reduce font size */
+    width: 80%; /* Full width */
+    margin: auto;
+    
+  }
+
+  .modal-image-container {
+    width: 100%;
+    max-height: 50vh; /* Limit image height */
+  }
+}
+
+@media (max-width: 400px) {
+  .modal {
+    width: 80%; /* Full width */
+    height: auto;
+  }
+
+  .modal-content {
+    font-size: 10px; /* Smaller font size */
+    width: 80%; /* Full width */
+    margin: auto;
+  }
+
+  .modal-image-container {
+    width: 80%; /* Full width */
+    max-height: 40vh; /* Further limit image height */
+  }
+}
+
 
 .close-button {
   position: fixed; /* Fixed position to stay at the top-right corner */
