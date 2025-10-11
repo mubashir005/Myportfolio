@@ -10,6 +10,7 @@
     "serve": "gatsby serve",
     "protect": "node scripts/smart-protection.js",
     "dev": "gatsby develop",
+    "deploy": "gatsby build --prefix-paths && gh-pages -d public",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -37,6 +38,7 @@
     "webpack-dev-middleware": "^7.4.2"
   },
   "devDependencies": {
-    "gatsby-cli": "^5.13.1"
+    "gatsby-cli": "^5.13.1",
+    "gh-pages": "^6.1.1"
   }
 }
