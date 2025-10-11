@@ -38,7 +38,6 @@
     "webpack-dev-middleware": "^7.4.2"
   },
   "devDependencies": {
-    "gatsby-cli": "^5.13.1",
-    "gh-pages": "^6.1.1"
+    "gatsby-cli": "^5.13.1"
   }
 }
