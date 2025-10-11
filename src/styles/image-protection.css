@@ -1,0 +1,32 @@
+/* Minimal Image Protection - Test Version */
+
+/* Only prevent right-click and text selection - no display interference */
+img {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Gallery items */
+.gallery-item {
+  position: relative;
+}
+
+/* Completely remove any styles that might interfere with image display */
+
+/* Basic text selection prevention */
+*:not(input):not(textarea) {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Re-enable text selection for input fields */
+input, textarea, [contenteditable="true"] {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
