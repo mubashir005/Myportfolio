@@ -1,0 +1,538 @@
+/* Modern Portfolio Header Styles */
+
+.modern-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.modern-header.scrolled {
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 80px;
+}
+
+/* Logo/Brand */
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: inherit;
+  padding: 8px 0;
+  transition: all 0.3s ease;
+}
+
+.header-logo:hover {
+  transform: translateY(-1px);
+}
+
+.logo-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+}
+
+.header-logo:hover .logo-icon {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.logo-text {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin: 0;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.logo-subtitle {
+  font-size: 0.8rem;
+  color: #718096;
+  font-weight: 500;
+  margin: 2px 0 0 0;
+  line-height: 1;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Navigation */
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  font-size: 0.95rem;
+  position: relative;
+  transition: all 0.3s ease;
+  padding: 0.5rem 0;
+}
+
+.nav-link:hover {
+  color: #667eea;
+}
+
+.nav-link.active {
+  color: #667eea;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
+}
+
+/* CTA Button */
+.header-cta {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.header-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  color: white;
+}
+
+/* Mobile Menu Toggle */
+.mobile-menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.mobile-menu-toggle:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.hamburger {
+  width: 24px;
+  height: 20px;
+  position: relative;
+}
+
+.hamburger span {
+  display: block;
+  height: 3px;
+  width: 100%;
+  background: #333;
+  border-radius: 2px;
+  position: absolute;
+  transition: all 0.3s ease;
+}
+
+.hamburger span:nth-child(1) {
+  top: 0;
+}
+
+.hamburger span:nth-child(2) {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.hamburger span:nth-child(3) {
+  bottom: 0;
+}
+
+/* Mobile Menu Animation */
+.mobile-menu-toggle.active .hamburger span:nth-child(1) {
+  transform: rotate(45deg);
+  top: 50%;
+}
+
+.mobile-menu-toggle.active .hamburger span:nth-child(2) {
+  opacity: 0;
+}
+
+.mobile-menu-toggle.active .hamburger span:nth-child(3) {
+  transform: rotate(-45deg);
+  bottom: 50%;
+}
+
+/* Mobile Menu */
+.mobile-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.mobile-menu.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.mobile-nav-links {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  margin: 0;
+  list-style: none;
+  gap: 1rem;
+}
+
+.mobile-nav-link {
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1.1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  transition: color 0.3s ease;
+}
+
+.mobile-nav-link:hover,
+.mobile-nav-link.active {
+  color: #667eea;
+}
+
+.mobile-social {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+  margin-top: 1rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.mobile-social .social-link {
+  width: 50px;
+  height: 50px;
+  font-size: 1.4rem;
+}
+
+.mobile-cta {
+  margin-top: 1.5rem;
+  text-align: center;
+  padding-bottom: 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header-container {
+    padding: 0 1rem;
+    height: 70px;
+  }
+
+  .nav-links,
+  .header-social {
+    display: none;
+  }
+
+  .header-cta {
+    display: none;
+  }
+
+  .mobile-menu-toggle {
+    display: block;
+  }
+
+  .logo-text {
+    font-size: 1.25rem;
+  }
+
+  .logo-subtitle {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-container {
+    padding: 0 1rem;
+    height: 60px;
+  }
+
+  .logo-text {
+    font-size: 1.1rem;
+  }
+
+  .mobile-social {
+    gap: 0.8rem;
+  }
+
+  .social-link {
+    width: 38px;
+    height: 38px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-container {
+    padding: 0 1rem;
+    height: 60px;
+  }
+
+  .logo-text {
+    font-size: 1.1rem;
+  }
+}
+
+/* Smooth scroll offset for fixed header */
+.content-wrapper {
+  padding-top: 80px;
+}
+
+@media (max-width: 768px) {
+  .content-wrapper {
+    padding-top: 70px;
+  }
+}
+
+@media (max-width: 480px) {
+  .content-wrapper {
+    padding-top: 60px;
+  }
+}
+
+/* =================== NAVIGATION SOCIAL ICONS - SEPARATE SECTION =================== */
+/* Desktop Navigation Social Icons */
+.header-nav-social {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-left: 1.5rem;
+  padding-left: 1.5rem;
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.nav-social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 1.1rem;
+  color: #444 !important;
+  background: rgba(68, 68, 68, 0.08);
+  border: 1px solid rgba(68, 68, 68, 0.15);
+}
+
+.nav-social-link:hover {
+  color: #222 !important;
+  background: rgba(68, 68, 68, 0.15);
+  transform: translateY(-2px);
+  border-color: rgba(68, 68, 68, 0.25);
+}
+
+/* Mobile Navigation Social Icons */
+.mobile-nav-social {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.mobile-nav-social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 1.2rem;
+  color: #444 !important;
+  background: rgba(68, 68, 68, 0.08);
+  border: 1px solid rgba(68, 68, 68, 0.15);
+}
+
+.mobile-nav-social-link:hover {
+  color: #222 !important;
+  background: rgba(68, 68, 68, 0.15);
+  transform: translateY(-2px);
+  border-color: rgba(68, 68, 68, 0.25);
+}
+
+/* Dark Mode for Navigation Social Icons */
+@media (prefers-color-scheme: dark) {
+  .header-nav-social {
+    border-left-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .nav-social-link {
+    color: #ccc !important;
+    background: rgba(204, 204, 204, 0.08);
+    border-color: rgba(204, 204, 204, 0.15);
+  }
+
+  .nav-social-link:hover {
+    color: #fff !important;
+    background: rgba(204, 204, 204, 0.15);
+    border-color: rgba(204, 204, 204, 0.25);
+  }
+
+  .mobile-nav-social {
+    border-top-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .mobile-nav-social-link {
+    color: #ccc !important;
+    background: rgba(204, 204, 204, 0.08);
+    border-color: rgba(204, 204, 204, 0.15);
+  }
+
+  .mobile-nav-social-link:hover {
+    color: #fff !important;
+    background: rgba(204, 204, 204, 0.15);
+    border-color: rgba(204, 204, 204, 0.25);
+  }
+}
+
+/* =================== END NAVIGATION SOCIAL ICONS =================== */
+
+/* Simple Professional Social Links */
+.header-social {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: 1.5rem;
+  padding-left: 1.5rem;
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 1.1rem;
+  color: #666;
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.social-link:hover {
+  color: #333;
+  background: rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .modern-header {
+    background: rgba(20, 20, 20, 0.95);
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .modern-header.scrolled {
+    background: rgba(20, 20, 20, 0.98);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .nav-link,
+  .mobile-nav-link {
+    color: #e2e8f0;
+  }
+
+  .hamburger span {
+    background: #e2e8f0;
+  }
+
+  .mobile-menu {
+    background: rgba(20, 20, 20, 0.98);
+    border-top-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .header-social {
+    border-left-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .mobile-social {
+    border-top-color: rgba(255, 255, 255, 0.1);
+  }
+
+  /* Dark mode simple social links */
+  .social-link {
+    color: #ccc;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .social-link:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+  }
+}

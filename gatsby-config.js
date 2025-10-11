@@ -22,5 +22,12 @@ module.exports = {
         path: `${__dirname}/src/infographic_images/`,
       },
     },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `linkedin_images`,
+        path: `${__dirname}/src/linkedin_images/`,
+      },
+    },
   ],
 };

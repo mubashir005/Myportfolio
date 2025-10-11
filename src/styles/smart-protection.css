@@ -1,0 +1,283 @@
+/* Smart Portfolio Protection System */
+/* This CSS provides protection without interfering with Gatsby image rendering */
+
+/* === RIGHT-CLICK PROTECTION === */
+* {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Re-enable text selection for input fields */
+input, textarea, [contenteditable="true"] {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+/* === IMAGE DRAG PREVENTION === */
+img {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  pointer-events: auto; /* Ensure images remain interactive */
+}
+
+/* === VISIBLE PROTECTION WATERMARKS === */
+.gallery-item {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle but visible watermark lines for thumbnails */
+.gallery-item::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    43deg,
+    transparent 0px,
+    transparent 48px,
+    rgba(255, 255, 255, 0.08) 48px,
+    rgba(255, 255, 255, 0.08) 49px
+  );
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.6;
+}
+
+/* Hover effect - slightly more visible */
+.gallery-item:hover::after {
+  opacity: 0.7;
+  background: repeating-linear-gradient(
+    43deg,
+    transparent 0px,
+    transparent 45px,
+    rgba(255, 255, 255, 0.1) 45px,
+    rgba(255, 255, 255, 0.1) 46px
+  );
+}
+
+/* Light cross-hatch pattern for thumbnails */
+.gallery-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    -47deg,
+    transparent 0px,
+    transparent 52px,
+    rgba(255, 255, 255, 0.06) 52px,
+    rgba(255, 255, 255, 0.06) 53px
+  );
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.5;
+}
+
+/* === MODAL IMAGE PROTECTION === */
+.modal-content, .modal-image-container {
+  position: relative;
+}
+
+/* Strong watermarks for modal images */
+.modal-image-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    41deg,
+    transparent 0px,
+    transparent 38px,
+    rgba(255, 255, 255, 0.1) 38px,
+    rgba(255, 255, 255, 0.1) 39px
+  );
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0.7;
+}
+
+/* Cross-hatch for modal images */
+.modal-image-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    -43deg,
+    transparent 0px,
+    transparent 42px,
+    rgba(255, 255, 255, 0.08) 42px,
+    rgba(255, 255, 255, 0.08) 43px
+  );
+  pointer-events: none;
+  z-index: 9;
+  opacity: 0.6;
+}
+
+/* Enhanced protection when zoomed to fullscreen */
+.modal.zoomed .modal-image-container::after {
+  background: repeating-linear-gradient(
+    39deg,
+    transparent 0px,
+    transparent 28px,
+    rgba(255, 255, 255, 0.04) 28px,
+    rgba(255, 255, 255, 0.04) 29px
+  );
+  opacity: 0.45;
+}
+
+/* Enhanced cross-hatch when zoomed */
+.modal.zoomed .modal-image-container::before {
+  background: repeating-linear-gradient(
+    -41deg,
+    transparent 0px,
+    transparent 32px,
+    rgba(255, 255, 255, 0.035) 32px,
+    rgba(255, 255, 255, 0.035) 33px
+  );
+  opacity: 0.4;
+}
+
+/* Additional protection for fullscreen images */
+.modal.zoomed .modal-content::after {
+  content: 'PROTECTED CONTENT';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  font-size: 48px;
+  color: rgba(255, 255, 255, 0.1);
+  font-weight: bold;
+  pointer-events: none;
+  z-index: 15;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: 3px;
+}
+
+/* === PRINT PROTECTION === */
+@media print {
+  .gallery-container,
+  .gallery-grid,
+  .modal {
+    display: none !important;
+  }
+  
+  body::after {
+    content: "Portfolio content is protected and cannot be printed. Visit the live site to view images.";
+    display: block;
+    text-align: center;
+    font-size: 18px;
+    margin: 50px;
+    padding: 20px;
+    border: 2px solid #333;
+  }
+}
+
+/* === SELECTION PROTECTION === */
+.gallery-item,
+.modal-image-container {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* === INVISIBLE COPYRIGHT NOTICES === */
+.hidden-copyright {
+  position: absolute;
+  top: -10000px;
+  left: -10000px;
+  opacity: 0;
+  font-size: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* === SCREEN CAPTURE DETERRENT === */
+.blur-protection {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 2;
+  transition: backdrop-filter 0.3s ease;
+}
+
+/* DevTools Detection Warning */
+.devtools-warning {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  font-size: 24px;
+  text-align: center;
+}
+
+.devtools-warning.active {
+  display: flex;
+}
+
+/* === SEO PROTECTION === */
+/* This hides content from crawlers while keeping it visible to users */
+.seo-protection {
+  font-size: 0;
+  color: transparent;
+  position: absolute;
+  top: -1000px;
+  left: -1000px;
+}
+
+/* === NO INTERFERENCE WITH GATSBY IMAGES === */
+/* All Gatsby image components work properly without any custom styles */
+
+/* === CONTEXT MENU STYLING === */
+.custom-context-menu {
+  position: fixed;
+  background: #2d3748;
+  border: 1px solid #4a5568;
+  border-radius: 4px;
+  padding: 8px 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 10000;
+  color: white;
+  font-size: 14px;
+}
+
+.custom-context-menu-item {
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.custom-context-menu-item:hover {
+  background-color: #4a5568;
+}

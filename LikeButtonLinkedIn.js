@@ -1,0 +1,61 @@
+import React, { useState, useEffect } from "react";
+import { db } from "./firebaseConfig";
+import { doc, getDoc, setDoc, updateDoc, increment } from "firebase/firestore";
+
+const LikeButtonLinkedIn = ({ projectId }) => {
+  const [likeCount, setLikeCount] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch the initial like count from Firestore
+  useEffect(() => {
+    const fetchLikes = async () => {
+      try {
+        const docRef = doc(db, "linkedin_posts", projectId);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          setLikeCount(docSnap.data().likes || 0);
+        } else {
+          await setDoc(docRef, { likes: 0 });
+        }
+      } catch (error) {
+        console.error("Error fetching likes: ", error);
+      }
+    };
+
+    fetchLikes();
+  }, [projectId]);
+
+  // Handle like button click
+  const handleLike = async (event) => {
+    event.stopPropagation();
+    
+    if (loading) return;
+    setLoading(true);
+
+    try {
+      const docRef = doc(db, "linkedin_posts", projectId);
+      await updateDoc(docRef, {
+        likes: increment(1),
+      });
+      setLikeCount((prevCount) => prevCount + 1);
+    } catch (error) {
+      console.error("Error updating likes: ", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <button
+      className="like-button"
+      onClick={handleLike}
+      disabled={loading}
+    >
+      <span className="heart-icon">❤️</span>
+      <span className="like-count">{likeCount}</span>
+    </button>
+  );
+};
+
+export default LikeButtonLinkedIn;

@@ -16,10 +16,12 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import "../profileimage/gallery2.css";
+import "../styles/smart-protection.css";
 import myImage from "../profileimage/my_image.jpg";
 import Header from "../components/Header";
 import FeedbackSidebar from "../components/FeedbackSidebar";
 import Footer from "../components/Footer";
+import SmartProtection from "../components/SmartProtection";
 import LikeButton from "../../LikeButtoninfo";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faCommentDots } from "@fortawesome/free-solid-svg-icons"; // Import FontAwesome icons
@@ -42,15 +44,86 @@ const Infographics = ({ data }) => {
   const itemsPerPage = 100; //number of image per page
   const [touchStart, setTouchStart] = useState(null); // Track touch start position
   const [touchEnd, setTouchEnd] = useState(null); // Track touch end position
+  const [heroShrunk, setHeroShrunk] = useState(false); // Track hero section state
+  const [scrollIndicatorVisible, setScrollIndicatorVisible] = useState(false);
 
   useEffect(() => {
     if (typeof document !== "undefined") {
       const closeButton = document.querySelector('.close-button');
     }
   }, []);
+
+  // Interactive hero behavior
+  useEffect(() => {
+    // Show scroll indicator after initial animations
+    const timer = setTimeout(() => {
+      setScrollIndicatorVisible(true);
+    }, 2500);
+
+    // Handle scroll events to auto-shrink hero on scroll
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      const heroHeight = window.innerHeight * 0.4; // 40% of viewport height
+      
+      if (scrollPosition > heroHeight && !heroShrunk) {
+        setHeroShrunk(true);
+        
+        // Trigger gallery animations
+        setTimeout(() => {
+          const portfolioSection = document.querySelector('.portfolio-header');
+          const gallerySection = document.querySelector('.gallery-container');
+          
+          if (portfolioSection) {
+            portfolioSection.classList.add('visible');
+          }
+          
+          if (gallerySection) {
+            gallerySection.classList.add('visible');
+          }
+        }, 400);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [heroShrunk]);
+
+  // Scroll to gallery function with hero shrinking
+  const scrollToGallery = () => {
+    setHeroShrunk(true);
+    
+    // Trigger gallery animations
+    setTimeout(() => {
+      const portfolioSection = document.querySelector('.portfolio-header');
+      const gallerySection = document.querySelector('.gallery-container');
+      
+      if (portfolioSection) {
+        portfolioSection.classList.add('visible');
+      }
+      
+      if (gallerySection) {
+        gallerySection.classList.add('visible');
+        gallerySection.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    }, 600); // Small delay for animation
+  };
   
   const imageRef = useRef(null); // Ref for the image
   
+  // Make portfolio header visible on component mount
+  useEffect(() => {
+    const portfolioSection = document.querySelector('.portfolio-header');
+    if (portfolioSection) {
+      portfolioSection.classList.add('visible');
+    }
+  }, []);
   
 
   const uploadImagesToFirebase = async () => {
@@ -69,6 +142,17 @@ const Infographics = ({ data }) => {
     });
 
     await Promise.all(imageUploadPromises);
+  };
+
+  // Scroll function for hero section
+  const scrollToPortfolio = () => {
+    const portfolioSection = document.querySelector('.portfolio-header');
+    if (portfolioSection) {
+      portfolioSection.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
   };
 
 
@@ -111,6 +195,12 @@ const Infographics = ({ data }) => {
       return b.dateAdded - a.dateAdded;
     } else if (sortCriteria === "Popular") {
       return b.likes - a.likes;
+    } else if (sortCriteria === "Oldest") {
+      return a.dateAdded - b.dateAdded;
+    } else if (sortCriteria === "A-Z") {
+      return a.title?.localeCompare(b.title || "") || 0;
+    } else if (sortCriteria === "Z-A") {
+      return b.title?.localeCompare(a.title || "") || 0;
     }
     return 0;
   });
@@ -132,21 +222,120 @@ const Infographics = ({ data }) => {
     setFeedback("");
   };
 
-  // Toggle zoom on image
+  // Enhanced Toggle zoom with protection
   const toggleZoom = () => {
     if (typeof document !== "undefined") {
       const imageElement = imageRef.current?.querySelector("img");
   
       if (imageElement) {
         if (!isZoomed) {
-          if (imageElement.requestFullscreen) {
-            imageElement.requestFullscreen();
-          } else if (imageElement.webkitRequestFullscreen) {
-            imageElement.webkitRequestFullscreen();
-          } else if (imageElement.msRequestFullscreen) {
-            imageElement.msRequestFullscreen();
+          // Apply protection to fullscreen mode
+          const fullscreenContainer = document.createElement('div');
+          fullscreenContainer.className = 'protected-fullscreen-container';
+          fullscreenContainer.innerHTML = `
+            <div class="fullscreen-protection-overlay">
+              <div class="protection-watermark">© MUBASHIR UI HASSAN</div>
+              <div class="protection-warning">⚠️ Protected Content</div>
+            </div>
+          `;
+          
+          // Clone and protect the image
+          const protectedImage = imageElement.cloneNode();
+          protectedImage.oncontextmenu = (e) => e.preventDefault();
+          protectedImage.ondragstart = (e) => e.preventDefault();
+          protectedImage.onselectstart = (e) => e.preventDefault();
+          
+          fullscreenContainer.appendChild(protectedImage);
+          document.body.appendChild(fullscreenContainer);
+          
+          // Request fullscreen on the protected container
+          if (fullscreenContainer.requestFullscreen) {
+            fullscreenContainer.requestFullscreen();
+          } else if (fullscreenContainer.webkitRequestFullscreen) {
+            fullscreenContainer.webkitRequestFullscreen();
+          } else if (fullscreenContainer.msRequestFullscreen) {
+            fullscreenContainer.msRequestFullscreen();
           }
+          
+          // Apply protection styles
+          const protectionStyle = document.createElement('style');
+          protectionStyle.id = 'fullscreen-protection-styles';
+          protectionStyle.textContent = `
+            .protected-fullscreen-container {
+              position: relative;
+              width: 100vw;
+              height: 100vh;
+              background: #000;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              user-select: none;
+              -webkit-user-select: none;
+              -moz-user-select: none;
+            }
+            .protected-fullscreen-container img {
+              max-width: 95%;
+              max-height: 95%;
+              object-fit: contain;
+              pointer-events: none;
+              user-select: none;
+              -webkit-user-drag: none;
+              filter: brightness(0.95);
+            }
+            .fullscreen-protection-overlay {
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              pointer-events: none;
+              z-index: 1000;
+            }
+            .protection-watermark {
+              position: absolute;
+              top: 20px;
+              right: 20px;
+              color: rgba(255, 255, 255, 0.7);
+              font-size: 16px;
+              font-weight: bold;
+              text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+              font-family: 'Inter', sans-serif;
+            }
+            .protection-warning {
+              position: absolute;
+              bottom: 20px;
+              left: 20px;
+              color: rgba(255, 255, 255, 0.6);
+              font-size: 14px;
+              font-weight: 500;
+              text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            }
+          `;
+          document.head.appendChild(protectionStyle);
+          
+          // Handle fullscreen exit
+          const handleFullscreenChange = () => {
+            if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+              // Remove protection elements
+              const container = document.querySelector('.protected-fullscreen-container');
+              const styles = document.getElementById('fullscreen-protection-styles');
+              if (container) container.remove();
+              if (styles) styles.remove();
+              setIsZoomed(false);
+              
+              // Remove event listener
+              document.removeEventListener('fullscreenchange', handleFullscreenChange);
+              document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+              document.removeEventListener('msfullscreenchange', handleFullscreenChange);
+            }
+          };
+          
+          document.addEventListener('fullscreenchange', handleFullscreenChange);
+          document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+          document.addEventListener('msfullscreenchange', handleFullscreenChange);
+          
         } else {
+          // Exit fullscreen
           if (document.exitFullscreen) {
             document.exitFullscreen();
           } else if (document.webkitExitFullscreen) {
@@ -306,68 +495,144 @@ const Infographics = ({ data }) => {
 
   return (
     <>
+      <SmartProtection />
       <Helmet>
         <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
         />
+        <meta name="description" content="Professional Infographics Portfolio by Mubashir UI Hassan" />
+        <meta name="author" content="Mubashir UI Hassan" />
+        <meta name="copyright" content="© 2025 Mubashir UI Hassan. All rights reserved." />
+        <title>Infographics - Mubashir UI Hassan Portfolio</title>
       </Helmet>
       <Header />
-      <div className={`content ${modalIsOpen ? "blurred" : ""}`}>
-        {/* Profile Section */}
-        <div className="profile-header">
-          <img src={myImage} alt="Profile Picture" className="profile-image" />
-          <div className="profile-info">
-            <h2 className="profile-name">MUBASHIR UI Hassan</h2>
-            <p className="profile-location">Pakistan</p>
-            <p className="profile-description">
-            Transforming concepts into captivating visuals for modern brands
-            </p>
-            <div className="profile-buttons">
-                <button className="get-in-touch">Get in touch</button>
-                <a
-                  href="https://www.upwork.com/freelancers/~0179dc344f6192cef1?mp_source=share"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="upwork-button"
-                >
-                  Upwork Profile
-                </a>
-                <button className="more-options">...</button>
+      
+      {/* Hero Section */}
+      <section className={`hero-section ${heroShrunk ? 'shrunk' : ''}`}>
+        <div className="hero-content">
+          <div className="hero-text">
+            <div className="hero-greeting">
+              <span className="greeting-text">Hello there!</span>
+              <div className="status-badge">
+                <div className="status-dot"></div>
+                Available for work
               </div>
+            </div>
+
+            <h1 className="hero-title">
+              <span className="name-primary">MUBASHIR UI</span>
+              <span className="name-secondary">Hassan</span>
+            </h1>
+
+            <h2 className="hero-subtitle">Infographic Design Specialist</h2>
+
+            <p className="hero-description">
+              Creating compelling visual stories through data-driven infographics that engage, inform, and inspire your audience with modern design principles.
+            </p>
+
+            <div className="hero-stats">
+              <div className="stat-item">
+                <span className="stat-number">8+</span>
+                <span className="stat-label">Years Experience</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-number">500+</span>
+                <span className="stat-label">Infographics Created</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-number">98%</span>
+                <span className="stat-label">Client Satisfaction</span>
+              </div>
+            </div>
+
+            <div className="hero-actions">
+              <button className="cta-primary" onClick={scrollToGallery}>
+                <i className="fas fa-rocket"></i>
+                Explore Infographics
+              </button>
+               <Link to="/contact" className="cta-secondary" style={{textDecoration: 'none'}}>
+                  <i className="fas fa-paper-plane"></i>
+                  Let's Work Together
+                </Link>
+            </div>
+
+         {/*    <div className="hero-social">
+              <span className="social-label">Follow me:</span>
+              <div className="social-links">
+                <a href="#" className="social-link">
+                  <i className="fab fa-behance"></i>
+                </a>
+                <a href="#" className="social-link">
+                  <i className="fab fa-dribbble"></i>
+                </a>
+                <a href="#" className="social-link">
+                  <i className="fab fa-linkedin"></i>
+                </a>
+              </div>
+            </div> */}
+          </div>
+
+          <div className="hero-visual">
+            <div className="hero-image-container">
+              <div className="image-backdrop"></div>
+              <img src={myImage} alt="Mubashir UI Hassan" className="hero-image" />
+              <div className="image-decoration">
+                <div className="floating-element element-1"></div>
+                <div className="floating-element element-2"></div>
+                <div className="floating-element element-3"></div>
+              </div>
+              <div className="location-card">
+                <i className="fas fa-map-marker-alt"></i>
+                Pakistan
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Portfolio categories and sorting controls */}
-        <div className="portfolio-header">
-          <div className="portfolio-categories">
-            <Link to="/" className="tab">
-             Isometric Illustrations
-            </Link>
-            <button className="tab active">Infographics</button>
-            <button className="tab">Social Media</button>
-            <button className="tab">Logos</button>
-            <button className="tab">AI Generated</button>
-          </div>
+        <div className={`hero-scroll ${scrollIndicatorVisible ? 'visible' : ''}`} onClick={scrollToGallery}>
+          <span className="scroll-text">Explore</span>
+          <i className="fas fa-chevron-down scroll-arrow"></i>
+        </div>
+      </section>
 
-          {/* Sorting controls */}
-          <div className="portfolio-controls">
-            <select
-              className="sort-dropdown"
-              onChange={handleSortChange}
-              value={sortCriteria}
-            >
-              <option value="Recent">Sort by: Recent</option>
-              <option value="Popular">Sort by: Popular</option>
-            </select>
-            <button className="boost-button">Get Offer</button>
-          </div>
+      {/* Portfolio categories and sorting controls */}
+      <div className="portfolio-header">
+        <div className="portfolio-categories">
+          <Link to="/" className="tab">
+           Isometric Illustrations
+          </Link>
+          <button className="tab active">Infographics</button>
+          <Link to="/linkedin" className="tab">LinkedIn Posts</Link>
+          <button className="tab">Social Media</button>
+          <button className="tab">Logos</button>
+          <button className="tab">AI Generated</button>
         </div>
 
-        {/* Gallery Section */}
-        <div className="gallery-container">
-          <h1>My Infographics Collection</h1>
-          <p>Explore my collection of infographics below.</p>
+        {/* Sorting controls */}
+        <div className="portfolio-controls">
+          <select
+            className="sort-dropdown"
+            onChange={handleSortChange}
+            value={sortCriteria}
+          >
+            <option value="Recent">Sort by: Recent</option>
+            <option value="Popular">Sort by: Popular</option>
+            <option value="Oldest">Sort by: Oldest</option>
+            <option value="A-Z">Sort by: A-Z</option>
+            <option value="Z-A">Sort by: Z-A</option>
+          </select>
+          <button className="boost-button">Get Offer</button>
+        </div>
+      </div>
+
+      <div className="content-wrapper">
+        <div className={`content ${modalIsOpen ? "blurred" : ""}`}>
+        
+          {/* Gallery Section */}
+          <div className="gallery-container">
+          <h1>Professional Infographics</h1>
+          <p>Explore my collection of data visualization and infographic designs that transform complex information into engaging visual stories.</p>
           <div className="gallery-grid">
           {paginatedImages.map((image, index) => (
               <div
@@ -465,8 +730,7 @@ const Infographics = ({ data }) => {
               />
               </div>
       )}
-      
-      
+      </div> {/* Close content-wrapper */}
     </>
     
   );
