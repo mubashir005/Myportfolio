@@ -1,0 +1,58 @@
+# Image Protection and Anti-Hotlinking
+# Prevent direct access to images from external sites
+RewriteEngine on
+RewriteCond %{HTTP_REFERER} !^$
+RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?yourdomain\.com [NC]
+RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?localhost [NC]
+RewriteRule \.(jpg|jpeg|png|gif|webp|svg)$ - [NC,F,L]
+
+# Disable server signature
+ServerSignature Off
+
+# Hide .htaccess from being viewed
+<Files .htaccess>
+Order allow,deny
+Deny from all
+</Files>
+
+# Prevent access to source maps and config files
+<Files ~ "\.(map|config|env|git)$">
+Order allow,deny
+Deny from all
+</Files>
+
+# Security headers
+<IfModule mod_headers.c>
+    # Prevent clickjacking
+    Header always append X-Frame-Options SAMEORIGIN
+    
+    # Prevent content type sniffing
+    Header set X-Content-Type-Options nosniff
+    
+    # Enable XSS filtering
+    Header set X-XSS-Protection "1; mode=block"
+    
+    # Strict transport security (if using HTTPS)
+    Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+    
+    # Content Security Policy
+    Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.googleapis.com *.gstatic.com *.firebase.com *.firebaseapp.com; style-src 'self' 'unsafe-inline' *.googleapis.com *.gstatic.com; img-src 'self' data: blob: *.googleapis.com *.gstatic.com; font-src 'self' *.googleapis.com *.gstatic.com; connect-src 'self' *.firebase.com *.firebaseapp.com *.googleapis.com"
+    
+    # Remove server information
+    Header unset Server
+    Header unset X-Powered-By
+    
+    # Cache control for images (prevent caching for protection)
+    <FilesMatch "\.(jpg|jpeg|png|gif|webp|svg)$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+    </FilesMatch>
+</IfModule>
+
+# Disable directory browsing
+Options -Indexes
+
+# Custom error pages (optional)
+ErrorDocument 403 /403.html
+ErrorDocument 404 /404.html
